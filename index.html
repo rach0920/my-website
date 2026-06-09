@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ametopia | DIY Charms for Bags, Bracelets, Shoes & Necklaces</title>
+    <meta name="description" content="Shop unique DIY charms for bags, bracelets, shoes & necklaces. Personalize your accessories with Ametopia's curated charm collection.">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="announcement" aria-label="Ametopia announcements">
+      <div class="announcement-track">
+        <span>Subscribe and get 10% off on your first order over $100</span>
+        <span>Subscribe and get 10% off on your first order over $100</span>
+        <span>Subscribe and get 10% off on your first order over $100</span>
+        <span>Subscribe and get 10% off on your first order over $100</span>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Ametopia home">
+        <img src="assets/ametopia-logo.png" alt="Ametopia">
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <button data-filter="all">Shop All</button>
+        <a href="#newArrivalsSection">New Arrivals</a>
+        <a href="#salesSection">Sales</a>
+        <button data-filter="Beads">Beads</button>
+        <button data-filter="Chains">Chains</button>
+        <button data-filter="Charms">Charms</button>
+        <a href="#setsSection">Sets</a>
+        <a href="builder.html">Charm Builder</a>
+      </nav>
+      <div class="header-actions">
+        <label class="search">
+          <span>Search</span>
+          <input id="searchInput" type="search" placeholder="heart, star, gold">
+        </label>
+        <button class="icon-button" id="accountButton" aria-label="Account">Wishlist</button>
+        <button class="icon-button" id="cartButton" aria-label="Cart">Bag <span id="cartCount">0</span></button>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">WHERE THE WONDER MEETS THE BEADS</p>
+          <h1 class="rainbow-word" aria-label="Ametopia">
+            <span>A</span><span>m</span><span>e</span><span>t</span><span>o</span><span>p</span><span>i</span><span>a</span>
+          </h1>
+          <p>Charm your world, one piece at a time.</p>
+          <p class="hero-subcopy">Create your own look - charms for bags, bracelets, shoes & necklaces.</p>
+          <div class="hero-actions">
+          <a class="primary-link" href="#shop">Shop charms</a>
+          <a class="secondary-link" href="builder.html">Build a charm piece</a>
+          </div>
+        </div>
+        <div class="hero-gallery" aria-label="Featured Ametopia products">
+          <img id="heroMainImage" class="hero-main" src="assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" alt="Gold Curb Chain Carabiner Necklace">
+          <img id="heroSideImageOne" src="assets/products/uniform/sweet-cherry-pair-charm.jpg" alt="Sweet Cherry Pair Charm">
+          <img id="heroSideImageTwo" src="assets/products/uniform/golden-key-heart-charm.jpg" alt="Golden Key & Heart Charm">
+        </div>
+        <div class="hero-dots" aria-label="Hero slides">
+          <button class="active" type="button" data-hero-slide="0" aria-label="Slide 1"></button>
+          <button type="button" data-hero-slide="1" aria-label="Slide 2"></button>
+          <button type="button" data-hero-slide="2" aria-label="Slide 3"></button>
+        </div>
+      </section>
+
+      <section class="service-strip" aria-label="Store promises">
+        <div><strong>Secure checkout</strong><span>Stripe credit card payments only</span></div>
+        <div><strong>Independent store</strong><span>Products, carts, orders, coupons</span></div>
+        <div><strong>Giftable by default</strong><span>Notes, wrapping, delivery choices</span></div>
+        <div><strong>Member perks</strong><span>Wishlist back-in-stock email alerts</span></div>
+      </section>
+
+      <section class="subscribe-band" id="subscribe">
+        <div>
+          <p class="kicker">First order perk</p>
+          <h2>Subscribe and get 10% off over A$100</h2>
+        </div>
+        <form id="subscribeForm">
+          <input type="email" name="email" placeholder="you@example.com" required>
+          <button class="primary-button" type="submit">Subscribe</button>
+        </form>
+        <p id="subscribeMessage"></p>
+      </section>
+
+      <section class="category-band">
+        <button data-filter="Beads"><img src="assets/products/uniform/green-smoothie-cup-charm.jpg" alt=""><span>Beads</span></button>
+        <button data-filter="Chains"><img src="assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" alt=""><span>Chains</span></button>
+        <button data-filter="Charms"><img src="assets/products/uniform/gold-dice-charm.jpg" alt=""><span>Charms</span></button>
+        <a href="#setsSection"><img src="assets/products/uniform/heart-stars-charm-chain-necklace.jpg" alt=""><span>Sets</span></a>
+      </section>
+
+      <section class="featured-section" id="newArrivalsSection">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Fresh edit</p>
+            <h2>New Arrivals</h2>
+            <p class="section-copy">Fresh charms and chains for the newest Ametopia looks.</p>
+          </div>
+        </div>
+        <div class="product-grid" id="newArrivalsGrid"></div>
+      </section>
+
+      <section class="featured-section" id="salesSection">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Limited time</p>
+            <h2>Sales</h2>
+            <p class="section-copy">Limited-time promotions and seasonal offers.</p>
+          </div>
+        </div>
+        <div class="sale-promo-grid" id="salesPromoPanel"></div>
+        <div class="product-grid" id="salesGrid"></div>
+      </section>
+
+      <section class="featured-section" id="setsSection">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Ready-to-style</p>
+            <h2 id="setsTitle">Sets</h2>
+            <p class="section-copy" id="setsCopy">Ready-to-style combinations. More sets can be uploaded by admin later.</p>
+          </div>
+        </div>
+        <div class="product-grid" id="setsGrid"></div>
+      </section>
+
+      <div id="customSections"></div>
+
+      <section id="shop" class="shop-shell">
+        <aside class="filters" aria-label="Product filters">
+          <h2>Shop</h2>
+          <label>Sort
+            <select id="sortSelect">
+              <option value="featured">Featured</option>
+              <option value="new">Newest</option>
+              <option value="low">Price: low to high</option>
+              <option value="high">Price: high to low</option>
+            </select>
+          </label>
+          <label>Price
+            <input id="priceRange" type="range" min="20" max="120" value="120">
+            <span id="priceLabel">Up to A$120</span>
+          </label>
+          <label class="check"><input id="inStockOnly" type="checkbox"> In stock only</label>
+        </aside>
+        <div class="product-area">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">Ametopia edit</p>
+              <h2 id="collectionTitle">All Jewelry</h2>
+            </div>
+            <span id="resultCount"></span>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+        </div>
+      </section>
+
+      <section id="custom" class="builder">
+        <div>
+          <p class="kicker">Charm builder</p>
+          <h2>Create your own product</h2>
+          <p>Choose a base, add charms with quantities, preview the final creation, then proceed when it feels right.</p>
+        </div>
+        <a class="primary-link builder-effect-link" href="builder.html" data-builder-effect>Open Charm Builder</a>
+      </section>
+
+    </main>
+
+    <footer>
+      <img src="assets/ametopia-logo.png" alt="Ametopia">
+      <div>
+        <strong>Ametopia</strong>
+        <p>Shop unique DIY charms for bags, bracelets, shoes & necklaces.</p>
+      </div>
+      <a href="about.html">Meet Ametopia</a>
+      <a href="customer-care.html">Customer Care</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="sitemap.html">Site Map</a>
+      <a href="terms.html">Terms</a>
+      <a href="admin.html">Admin</a>
+    </footer>
+
+    <dialog id="productDialog"></dialog>
+    <aside class="drawer" id="cartDrawer" aria-hidden="true">
+      <div class="drawer-head">
+        <h2>Your bag</h2>
+        <button class="icon-button" id="closeCart" type="button" aria-label="Close cart">×</button>
+      </div>
+      <div id="cartItems"></div>
+      <div class="cart-summary">
+        <label>Promo code
+          <input id="promoInput" placeholder="AME10">
+        </label>
+        <label>Post option
+          <select data-delivery-select id="cartDeliverySelect"></select>
+        </label>
+        <div><span>Subtotal</span><strong id="subtotal">$0</strong></div>
+        <div><span>Discount</span><strong id="discount">$0</strong></div>
+        <div><span>Shipping</span><strong id="shipping">$0</strong></div>
+        <div><span>Tax</span><strong id="tax">$0</strong></div>
+        <div class="total"><span>Total</span><strong id="total">$0</strong></div>
+        <button class="primary-button" id="checkoutButton">Checkout</button>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <dialog id="checkoutDialog">
+      <form method="dialog" id="checkoutForm" class="checkout">
+        <button class="icon-button close-dialog" type="button" aria-label="Close">×</button>
+        <h2>Checkout</h2>
+        <div class="checkout-grid">
+          <label>Email<input required type="email" name="email" placeholder="you@example.com"></label>
+          <label>Name<input required name="name" placeholder="Ametopia Customer"></label>
+          <label>Address<input required name="address" placeholder="Street, city, state"></label>
+          <label>Post option<select name="delivery" data-delivery-select></select></label>
+          <label>Payment provider<input name="paymentProvider" value="Stripe - credit card only" readonly></label>
+          <label>Gift note<input name="note" placeholder="Optional"></label>
+        </div>
+        <p class="payment-note">Credit card payments are processed through Stripe. Ametopia does not offer PayPal.</p>
+        <div class="card-fields">
+          <label>Card number<input required name="cardNumber" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="4242 4242 4242 4242"></label>
+          <label>Expiry<input required name="cardExpiry" autocomplete="cc-exp" placeholder="MM / YY"></label>
+          <label>CVC<input required name="cardCvc" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>
+        </div>
+        <button class="primary-button" type="submit">Place order</button>
+      </form>
+    </dialog>
+
+    <dialog id="accountDialog">
+      <form method="dialog" id="accountForm" class="account-form">
+        <button class="icon-button close-dialog" type="button" aria-label="Close">×</button>
+        <h2>Ametopia account</h2>
+        <label>Email<input required type="email" name="email" placeholder="you@example.com"></label>
+        <label>Name<input required name="name" placeholder="Your name"></label>
+        <button class="primary-button" type="submit">Save account</button>
+        <div id="accountState"></div>
+      </form>
+    </dialog>
+
+    <dialog id="imageZoomDialog" class="image-zoom-dialog"></dialog>
+
+    <script src="products-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ametopia Admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="admin-body">
+    <main class="admin-login" id="loginPanel">
+      <form id="adminLoginForm">
+        <img src="assets/ametopia-logo.png" alt="Ametopia">
+        <p class="kicker">Private admin</p>
+        <h1>Ametopia Studio</h1>
+        <label>Email
+          <input type="email" name="email" value="admin@ametopia.com" required>
+        </label>
+        <label>Password
+          <input type="password" name="password" value="ame-2016" required>
+        </label>
+        <button class="primary-button" type="submit">Log in</button>
+        <p class="admin-hint">Admin password: ame-2016</p>
+      </form>
+    </main>
+
+    <main class="admin-dashboard" id="adminDashboard" hidden>
+      <header class="admin-topbar">
+        <a class="brand" href="index.html" aria-label="Ametopia storefront">
+          <img src="assets/ametopia-logo.png" alt="Ametopia">
+        </a>
+        <div>
+          <p class="kicker">Ametopia Studio</p>
+          <h1>Operations</h1>
+        </div>
+        <nav class="nav admin-section-nav" aria-label="Admin navigation">
+          <a href="#adminProducts">Products</a>
+          <a href="#ordersList">Orders</a>
+          <a href="#discountsPanel">Promotions</a>
+          <a href="#builderInventoryPanel">Builder</a>
+          <a href="#pageSectionsPanel">Content</a>
+          <a href="index.html">Storefront</a>
+        </nav>
+        <button class="secondary-button" id="logoutButton">Log out</button>
+      </header>
+
+      <section class="admin">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Independent operations</p>
+            <h2>Dashboard</h2>
+          </div>
+          <button class="secondary-button" id="exportButton">Export data</button>
+        </div>
+        <div class="admin-kpi-grid" id="adminKpis"></div>
+        <div class="ops-grid admin-ops-grid">
+          <div class="ops-panel wide-panel">
+            <h3>Page Sections</h3>
+            <button type="button" id="addSectionButton">Add section/page</button>
+            <div id="pageSectionsPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Products & Inventory</h3>
+            <button type="button" id="addProductButton">Add product</button>
+            <div class="admin-data-tools">
+              <input id="productAdminSearch" type="search" placeholder="Search products by title, category, sku">
+              <select id="productAdminFilter">
+                <option value="all">All products</option>
+                <option value="Beads">Beads</option>
+                <option value="Chains">Chains</option>
+                <option value="Charms">Charms</option>
+                <option value="Sets">Sets</option>
+                <option value="low">Low stock</option>
+                <option value="sale">On sale</option>
+              </select>
+            </div>
+            <div class="admin-split">
+              <div id="adminProducts" class="admin-compact-list"></div>
+              <div id="productEditor" class="admin-editor-panel"></div>
+            </div>
+          </div>
+          <div class="ops-panel">
+            <h3>Orders & Fulfilment</h3>
+            <div id="ordersList"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Customers</h3>
+            <div id="customersList"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Wishlist & Restock Alerts</h3>
+            <div id="wishlistAlerts"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Discounts</h3>
+            <button type="button" id="addDiscountButton">Add promotion</button>
+            <div id="discountsPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Sales</h3>
+            <button type="button" id="addSaleButton">Add sale</button>
+            <div id="salesPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Shipping</h3>
+            <div id="shippingPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Payments</h3>
+            <div id="paymentsPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Analytics</h3>
+            <div id="analyticsPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Policies</h3>
+            <div id="policiesPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Store Settings</h3>
+            <div id="storeSettingsPanel"></div>
+          </div>
+          <div class="ops-panel">
+            <h3>Sets</h3>
+            <button type="button" id="addSetButton">Add set</button>
+            <div id="setsAdminPanel"></div>
+          </div>
+          <div class="ops-panel wide-panel">
+            <h3>Charm Builder Inventory</h3>
+            <button type="button" id="addBuilderBaseButton">Add base</button>
+            <button type="button" id="addBuilderCharmButton">Add charm</button>
+            <div class="admin-data-tools">
+              <input id="builderAdminSearch" type="search" placeholder="Search builder bases or charms">
+              <select id="builderAdminType">
+                <option value="builderBases">Bases</option>
+                <option value="builderCharms">Charms</option>
+              </select>
+            </div>
+            <div class="admin-split">
+              <div id="builderInventoryPanel" class="admin-compact-list"></div>
+              <div id="builderItemEditor" class="admin-editor-panel"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="products-data.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
