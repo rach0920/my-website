@@ -151,6 +151,7 @@ const adminState = {
   subscribers: readJson("ametopiaSubscribers", []),
   settings: mergedSettings(),
   ui: {
+    activePanel: "overview",
     selectedProduct: 0,
     productQuery: "",
     productFilter: "all",
@@ -248,6 +249,28 @@ function renderAdmin() {
   const totalUnits = adminState.products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
   const lowStock = adminState.products.filter((product) => product.stock > 0 && product.stock <= 3).length;
   const customerEmails = customers();
+  const promoCount = adminState.settings.discounts.length + adminState.settings.sales.length;
+  const builderCount = adminState.settings.builderBases.length + adminState.settings.builderCharms.length;
+
+  document.querySelectorAll("[data-admin-panel]").forEach((panel) => {
+    panel.hidden = panel.dataset.adminPanel !== adminState.ui.activePanel;
+  });
+  document.querySelectorAll("[data-admin-tab]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.adminTab === adminState.ui.activePanel);
+  });
+  const counts = {
+    navProductCount: adminState.products.length,
+    navOrderCount: adminState.orders.length,
+    navCustomerCount: customerEmails.length,
+    navPromoCount: promoCount,
+    navContentCount: adminState.settings.pageSections.length,
+    navSetCount: adminState.settings.sets.length,
+    navBuilderCount: builderCount,
+  };
+  Object.entries(counts).forEach(([id, value]) => {
+    const node = document.querySelector(`#${id}`);
+    if (node) node.textContent = value;
+  });
 
   document.querySelector("#adminKpis").innerHTML = `
     <div><strong>${adminMoney.format(totalSales, "AUD")}</strong><span>Total sales</span></div>
@@ -255,6 +278,13 @@ function renderAdmin() {
     <div><strong>${customerEmails.length}</strong><span>Customers</span></div>
     <div><strong>${lowStock}</strong><span>Low stock</span></div>
     <div><strong>${totalUnits}</strong><span>Units in stock</span></div>
+  `;
+  document.querySelector("#adminQuickActions").innerHTML = `
+    <button type="button" data-admin-tab="products"><strong>Add or edit products</strong><span>${adminState.products.length} products in catalogue</span></button>
+    <button type="button" data-admin-tab="orders"><strong>Manage orders</strong><span>${adminState.orders.length} orders in the system</span></button>
+    <button type="button" data-admin-tab="promotions"><strong>Update promotions</strong><span>${promoCount} discount and sale tools</span></button>
+    <button type="button" data-admin-tab="builder"><strong>Edit Charm Builder</strong><span>${builderCount} bases and charms</span></button>
+    <button type="button" data-admin-tab="settings"><strong>Shipping, payment, policies</strong><span>Stripe, AU Post and legal copy</span></button>
   `;
 
   document.querySelector("#pageSectionsPanel").innerHTML = adminState.settings.pageSections.map((section, index) => `
@@ -270,7 +300,7 @@ function renderAdmin() {
   const productRows = filteredAdminProducts();
   document.querySelector("#adminProducts").innerHTML = productRows.map(({ product, index }) => `
     <button type="button" class="admin-list-row ${index === adminState.ui.selectedProduct ? "active" : ""}" data-select-product="${index}">
-      <span><strong>${escapeHtml(product.title)}</strong><small>${escapeHtml(product.category)} · ${escapeHtml(product.id)}</small></span>
+      <span><strong>${escapeHtml(product.title)}</strong><small>${escapeHtml(product.category)} \u00b7 ${escapeHtml(product.id)}</small></span>
       <span>${product.stock <= 0 ? "Sold out" : product.stock <= 3 ? "Low" : product.stock}</span>
       <span>${adminMoney.format(product.salePrice || product.price, product.currency)}</span>
     </button>
@@ -492,7 +522,6 @@ function bindAdmin() {
   const loginForm = document.querySelector("#adminLoginForm");
   const logoutButton = document.querySelector("#logoutButton");
   const dashboard = document.querySelector("#adminDashboard");
-  const exportButton = document.querySelector("#exportButton");
 
   loginForm?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -546,6 +575,18 @@ function bindAdmin() {
   });
 
   dashboard?.addEventListener("click", (event) => {
+    const adminTab = event.target.closest("[data-admin-tab]");
+    if (adminTab) {
+      adminState.ui.activePanel = adminTab.dataset.adminTab;
+      renderAdmin();
+      return;
+    }
+
+    if (event.target.closest("[data-export]")) {
+      exportAdminData();
+      return;
+    }
+
     const productSelect = event.target.closest("[data-select-product]");
     if (productSelect) {
       adminState.ui.selectedProduct = Number(productSelect.dataset.selectProduct);
@@ -598,17 +639,17 @@ function bindAdmin() {
     }
   });
 
-  exportButton?.addEventListener("click", () => {
-    const payload = JSON.stringify(adminState, null, 2);
-    const blob = new Blob([payload], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "ametopia-commerce-export.json";
-    link.click();
-    URL.revokeObjectURL(link.href);
-  });
-
   if (readSession("ametopiaAdmin") === "true") showDashboard();
+}
+
+function exportAdminData() {
+  const payload = JSON.stringify(adminState, null, 2);
+  const blob = new Blob([payload], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "ametopia-commerce-export.json";
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 if (document.readyState === "loading") {
