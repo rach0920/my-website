@@ -515,7 +515,7 @@ function renderBuilderPage() {
   `).join("") || `<div class="empty">No bases in this category yet.</div>`;
   charmGrid.innerHTML = state.settings.builderCharms.map((item) => `
     <article class="builder-choice">
-      <img src="${item.image}" alt="${escapeHtml(item.title)}">
+      <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
       <strong>${escapeHtml(item.title)}</strong>
       <span>${money.format(item.price, "AUD")} \u00b7 ${item.stock} available</span>
       <button type="button" data-builder-charm="${item.id}">
@@ -573,13 +573,20 @@ function renderBuilderCharmSlots(selectedCharms, type) {
         <span class="charm-connector" aria-hidden="true"></span>
         <span class="charm-ring" aria-hidden="true"></span>
         <span class="charm-photo">
-            <img src="${item.image}" alt="${escapeHtml(item.title)}">
+            <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
         </span>
             <button type="button" data-builder-remove-index="${index}" aria-label="Remove ${escapeHtml(item.title)}">\u2212</button>
             <button type="button" class="swap-button" data-builder-swap-index="${index}">Swap</button>
       </span>
     `;
   }).join("");
+}
+
+function charmCutoutSrc(item) {
+  if (item.cutoutImage) return item.cutoutImage;
+  return String(item.image || "")
+    .replace("/uniform/", "/cutouts/")
+    .replace(/\.(jpe?g|png|webp)$/i, ".png");
 }
 
 function builderAnchors(type, count) {

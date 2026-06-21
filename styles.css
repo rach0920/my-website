@@ -991,20 +991,19 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   box-shadow: 0 4px 8px rgba(96, 63, 40, 0.16);
 }
 .charm-photo {
-  width: 66px;
-  height: 66px;
+  width: 78px;
+  height: 86px;
   display: grid;
   place-items: center;
   margin-top: -1px;
-  border-radius: 50%;
-  background: rgba(255, 250, 247, 0.88);
-  box-shadow: 0 12px 22px rgba(74, 56, 70, 0.18);
+  background: transparent;
+  filter: drop-shadow(0 12px 12px rgba(70, 52, 44, 0.2));
 }
 .creation-charms img {
-  width: 58px;
-  height: 58px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: 50%;
+  border-radius: 0;
 }
 .creation-item.swapping .charm-photo {
   outline: 2px solid var(--brown);
