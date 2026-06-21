@@ -894,36 +894,66 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 .creation-canvas {
   position: relative;
   min-height: 360px;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   border-radius: 8px;
-  background: var(--photo-bg);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.92), rgba(255, 250, 247, 0.88) 42%, rgba(248, 236, 228, 0.9) 100%);
 }
-.designer-canvas::before {
-  content: "";
+.builder-chain-svg {
   position: absolute;
-  inset: 30% 10% auto;
-  height: 96px;
-  border: 10px solid rgba(181, 143, 86, 0.34);
-  border-top: 0;
-  border-radius: 0 0 999px 999px;
-  filter: drop-shadow(0 12px 14px rgba(97, 70, 50, 0.12));
+  inset: 4% 3% 9%;
+  width: 94%;
+  height: 87%;
+  overflow: visible;
 }
-.designer-canvas.necklace::before,
-.designer-canvas.bag-chain::before {
-  inset: 18% 16% auto;
-  height: 180px;
-  border: 9px solid rgba(181, 143, 86, 0.34);
-  border-top: 0;
+.chain-line,
+.chain-shadow,
+.chain-soft,
+.chain-link,
+.jump-ring,
+.clasp {
+  fill: none;
+  vector-effect: non-scaling-stroke;
 }
-.designer-canvas.key-chain::before {
-  inset: 20% auto auto 50%;
-  width: 96px;
-  height: 96px;
-  border: 10px solid rgba(181, 143, 86, 0.34);
-  border-radius: 50%;
-  transform: translateX(-50%);
+.chain-shadow {
+  stroke: rgba(98, 67, 42, 0.12);
+  stroke-width: 22;
+  filter: blur(1px);
+}
+.chain-line {
+  stroke: #c49b55;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 8px 8px rgba(89, 61, 42, 0.16));
+}
+.chain-soft {
+  stroke: rgba(255, 246, 220, 0.92);
+  stroke-width: 8;
+}
+.chain-link {
+  stroke: #d2aa61;
+  stroke-width: 5;
+  fill: rgba(255, 249, 230, 0.24);
+}
+.jump-ring,
+.clasp {
+  stroke: #b88635;
+  stroke-width: 6;
+  filter: drop-shadow(0 7px 8px rgba(89, 61, 42, 0.18));
+}
+.creation-base-name {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 12px;
+  z-index: 4;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .creation-base {
   width: 78%;
@@ -932,48 +962,58 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .creation-charms {
   position: absolute;
-  left: 12%;
-  right: 12%;
-  top: 43%;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.creation-charms img {
-  width: 54px;
-  height: 54px;
-  object-fit: contain;
-  border-radius: 50%;
-  background: rgba(255, 250, 247, 0.82);
-  box-shadow: 0 8px 18px rgba(74, 56, 70, 0.14);
+  inset: 0;
+  z-index: 3;
 }
 .creation-item {
-  position: relative;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
   display: inline-grid;
   justify-items: center;
-  padding-top: 14px;
+  width: 82px;
+  transform: translate(-50%, -7px) rotate(var(--r));
+  transform-origin: 50% 0;
 }
-.creation-item.swapping img {
+.charm-connector {
+  width: 2px;
+  height: 24px;
+  background: linear-gradient(#b88635, #dec27d);
+  box-shadow: 0 2px 4px rgba(96, 63, 40, 0.2);
+}
+.charm-ring {
+  width: 18px;
+  height: 18px;
+  margin-top: -2px;
+  border: 3px solid #bd9145;
+  border-radius: 50%;
+  background: rgba(255, 248, 224, 0.55);
+  box-shadow: 0 4px 8px rgba(96, 63, 40, 0.16);
+}
+.charm-photo {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  margin-top: -1px;
+  border-radius: 50%;
+  background: rgba(255, 250, 247, 0.88);
+  box-shadow: 0 12px 22px rgba(74, 56, 70, 0.18);
+}
+.creation-charms img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.creation-item.swapping .charm-photo {
   outline: 2px solid var(--brown);
   outline-offset: 3px;
 }
-.creation-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 10px;
-  height: 18px;
-  border: 2px solid rgba(128, 91, 70, 0.45);
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  transform: translateX(-50%);
-}
 .creation-item button {
   position: absolute;
-  top: -7px;
-  right: -7px;
+  top: 22px;
+  right: 0;
   width: 22px;
   height: 22px;
   border: 1px solid var(--line);
