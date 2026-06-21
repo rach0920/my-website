@@ -4,7 +4,7 @@ const money = {
   }
 };
 
-const DATA_VERSION = "ametopia-operable-storefront-2026-06-07";
+const DATA_VERSION = "ametopia-creation-lab-bases-admin-2026-06-21";
 const baseProducts = Array.isArray(window.AMETOPIA_PRODUCTS) ? window.AMETOPIA_PRODUCTS : [];
 
 function safeJson(key, fallback) {
@@ -57,14 +57,7 @@ function defaultStoreSettings() {
         active: true,
       },
     ],
-    builderBases: [
-      { id: "gold-bead-ball-chain-bracelet", type: "bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
-      { id: "red-rope-gold-chain-bracelet", type: "bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
-      { id: "gold-curb-chain-carabiner-necklace", type: "necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-      { id: "gold-snake-chain-ring-clasp-necklace", type: "necklace", title: "Gold Snake Chain Ring Clasp Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-snake-chain-ring-clasp-necklace.jpg" },
-      { id: "custom-key-chain-base", type: "key-chain", title: "Gold Key Chain Base", price: 12.99, stock: 20, image: "assets/products/uniform/golden-key-heart-charm.jpg" },
-      { id: "custom-bag-chain-base", type: "bag-chain", title: "Gold Bag Chain Base", price: 18.99, stock: 20, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-    ],
+    builderBases: [],
     builderCharms: [
       { id: "sweet-cherry-pair-charm", title: "Sweet Cherry Pair Charm", price: 24.99, stock: 10, image: "assets/products/uniform/sweet-cherry-pair-charm.jpg" },
       { id: "pink-bow-sparkle-charm", title: "Pink Bow Sparkle Charm", price: 24.99, stock: 10, image: "assets/products/uniform/pink-bow-sparkle-charm.jpg" },
@@ -84,7 +77,7 @@ function inferBaseType(item) {
 }
 
 function normalizedBuilderBases(storedBases, defaultBases) {
-  const source = Array.isArray(storedBases) && storedBases.length ? storedBases : defaultBases;
+  const source = Array.isArray(storedBases) ? storedBases : defaultBases;
   const merged = [...source];
   defaultBases.forEach((base) => {
     if (!merged.some((item) => item.id === base.id)) merged.push(base);
@@ -113,13 +106,17 @@ function productToBuilderItem(product) {
 }
 
 function productsForBuilderBases(products) {
-  return products.filter((product) => product.category === "Chains").map(productToBuilderItem);
+  return [];
 }
 
 function productsForBuilderCharms(products) {
   return products
     .filter((product) => ["Beads", "Charms"].includes(product.category))
     .map(productToBuilderItem);
+}
+
+function hasBuilderImage(item) {
+  return Boolean(item?.image || item?.cutoutImage);
 }
 
 function readStoreSettings() {
@@ -144,6 +141,7 @@ function readStoreSettings() {
 try {
   if (localStorage.getItem("ametopiaDataVersion") !== DATA_VERSION) {
     localStorage.removeItem("ametopiaProducts");
+    localStorage.removeItem("ametopiaSettings");
     localStorage.setItem("ametopiaDataVersion", DATA_VERSION);
   }
 } catch {
@@ -532,7 +530,7 @@ function renderBuilderPage() {
   };
   const baseTypes = ["bracelet", "necklace", "key-chain", "bag-chain"];
   if (!state.builder.baseType) state.builder.baseType = "bracelet";
-  const basesForType = state.settings.builderBases.filter((item) => (item.type || inferBaseType(item)) === state.builder.baseType);
+  const basesForType = state.settings.builderBases.filter((item) => item.active !== false && hasBuilderImage(item) && (item.type || inferBaseType(item)) === state.builder.baseType);
   if (!basesForType.some((item) => item.id === state.builder.baseId)) state.builder.baseId = basesForType[0]?.id || state.settings.builderBases[0]?.id || "";
   const typeBar = document.querySelector("#builderTypeBar");
   if (typeBar) {
@@ -548,8 +546,9 @@ function renderBuilderPage() {
       <strong>${escapeHtml(item.title)}</strong>
       <span>${money.format(item.price, "AUD")} \u00b7 ${item.stock} available</span>
     </button>
-  `).join("") || `<div class="empty">No bases in this category yet.</div>`;
-  charmGrid.innerHTML = state.settings.builderCharms.map((item) => `
+  `).join("");
+  const visibleCharms = state.settings.builderCharms.filter((item) => item.active !== false && hasBuilderImage(item));
+  charmGrid.innerHTML = visibleCharms.map((item) => `
     <article class="builder-choice">
       <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
       <strong>${escapeHtml(item.title)}</strong>
@@ -566,9 +565,9 @@ function renderBuilderPreview() {
   const preview = document.querySelector("#builderPreview");
   if (!preview) return;
   refreshSettings();
-  const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId);
+  const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId && item.active !== false && hasBuilderImage(item));
   const selectedCharms = (state.builder.charms || [])
-    .map((id, index) => ({ item: state.settings.builderCharms.find((charm) => charm.id === id), index }))
+    .map((id, index) => ({ item: state.settings.builderCharms.find((charm) => charm.id === id && charm.active !== false && hasBuilderImage(charm)), index }))
     .filter(({ item }) => item);
   const total = (base?.price || 0) + selectedCharms.reduce((sum, { item }) => sum + item.price, 0);
   const typeLabel = {
@@ -608,7 +607,7 @@ function renderBuilderCharmSlots(selectedCharms, type) {
     const custom = state.builder.positions?.[index];
     const point = custom && Number.isFinite(custom.x) && Number.isFinite(custom.y) ? { ...anchor, ...custom } : anchor;
     return `
-      <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}" data-builder-drag-index="${index}" style="--x:${point.x}%; --y:${point.y}%; --r:${point.rotate || 0}deg;">
+      <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}" data-builder-drag-index="${index}" style="--x:${point.x}%; --y:${point.y}%; --r:${point.rotate || 0}deg; --scale:${Number(item.scale || 1)};">
         <span class="charm-photo">
             <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
         </span>
@@ -679,6 +678,7 @@ function renderBuilderBaseImage(type, base) {
   return `
     <img
       class="builder-base-cutout ${escapeHtml(type)}"
+      style="--base-scale:${Number(base.scale || 1)};"
       src="${baseCutoutSrc(base)}"
       alt="${escapeHtml(base.title)}"
       onerror="this.src='${base.image}'"
@@ -807,9 +807,9 @@ function bindGlobalEvents() {
 
     if (event.target.closest("[data-builder-add]")) {
       refreshSettings();
-      const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId);
+      const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId && item.active !== false && hasBuilderImage(item));
       const charms = (state.builder.charms || [])
-        .map((id) => state.settings.builderCharms.find((item) => item.id === id))
+        .map((id) => state.settings.builderCharms.find((item) => item.id === id && item.active !== false && hasBuilderImage(item)))
         .filter(Boolean);
       const total = (base?.price || 0) + charms.reduce((sum, item) => sum + item.price, 0);
       const title = `Custom ${base?.title || "Ametopia"} design`;

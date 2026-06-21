@@ -628,6 +628,16 @@ img { max-width: 100%; display: block; }
   gap: 10px;
   margin-bottom: 12px;
 }
+.admin-helper {
+  margin: -2px 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff8f4;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .admin-split {
   display: grid;
   grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.1fr);
@@ -915,7 +925,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   width: 94%;
   height: 86%;
   object-fit: contain;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--base-scale, 1));
   filter: drop-shadow(0 20px 18px rgba(93, 67, 46, 0.16));
   pointer-events: none;
 }
@@ -971,7 +981,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   display: inline-grid;
   justify-items: center;
   width: 70px;
-  transform: translate(-50%, -50%) rotate(var(--r));
+  transform: translate(-50%, -50%) rotate(var(--r)) scale(var(--scale, 1));
   transform-origin: 50% 0;
   cursor: grab;
   touch-action: none;

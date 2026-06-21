@@ -4,7 +4,7 @@ const adminMoney = {
   }
 };
 
-const DATA_VERSION = "ametopia-operable-storefront-2026-06-07";
+const DATA_VERSION = "ametopia-creation-lab-bases-admin-2026-06-21";
 const baseProducts = Array.isArray(window.AMETOPIA_PRODUCTS) ? window.AMETOPIA_PRODUCTS : [];
 
 function readJson(key, fallback) {
@@ -51,6 +51,7 @@ function removeSession(key) {
 try {
   if (localStorage.getItem("ametopiaDataVersion") !== DATA_VERSION) {
     localStorage.removeItem("ametopiaProducts");
+    localStorage.removeItem("ametopiaSettings");
     localStorage.setItem("ametopiaDataVersion", DATA_VERSION);
   }
 } catch {
@@ -90,14 +91,7 @@ function defaultSettings() {
         active: true,
       },
     ],
-    builderBases: [
-      { id: "gold-bead-ball-chain-bracelet", type: "bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
-      { id: "red-rope-gold-chain-bracelet", type: "bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
-      { id: "gold-curb-chain-carabiner-necklace", type: "necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-      { id: "gold-snake-chain-ring-clasp-necklace", type: "necklace", title: "Gold Snake Chain Ring Clasp Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-snake-chain-ring-clasp-necklace.jpg" },
-      { id: "custom-key-chain-base", type: "key-chain", title: "Gold Key Chain Base", price: 12.99, stock: 20, image: "assets/products/uniform/golden-key-heart-charm.jpg" },
-      { id: "custom-bag-chain-base", type: "bag-chain", title: "Gold Bag Chain Base", price: 18.99, stock: 20, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-    ],
+    builderBases: [],
     builderCharms: [
       { id: "sweet-cherry-pair-charm", title: "Sweet Cherry Pair Charm", price: 24.99, stock: 10, image: "assets/products/uniform/sweet-cherry-pair-charm.jpg" },
       { id: "pink-bow-sparkle-charm", title: "Pink Bow Sparkle Charm", price: 24.99, stock: 10, image: "assets/products/uniform/pink-bow-sparkle-charm.jpg" },
@@ -135,7 +129,7 @@ function inferBaseType(item) {
 }
 
 function normalizedBuilderBases(storedBases, defaultBases) {
-  const source = Array.isArray(storedBases) && storedBases.length ? storedBases : defaultBases;
+  const source = Array.isArray(storedBases) ? storedBases : defaultBases;
   const merged = [...source];
   defaultBases.forEach((base) => {
     if (!merged.some((item) => item.id === base.id)) merged.push(base);
@@ -164,7 +158,7 @@ function productToBuilderItem(product) {
 }
 
 function productsForBuilderBases(products) {
-  return products.filter((product) => product.category === "Chains").map(productToBuilderItem);
+  return [];
 }
 
 function productsForBuilderCharms(products) {
@@ -489,7 +483,7 @@ function renderBuilderInventory() {
   const rows = filteredBuilderItems();
   list.innerHTML = rows.map(({ item, index }) => `
     <button type="button" class="admin-list-row ${index === adminState.ui.selectedBuilderItem ? "active" : ""}" data-select-builder="${index}">
-      <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.id || "")}</small></span>
+      <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.id || "")}${item.active === false ? " · hidden" : ""}</small></span>
       <span>${item.stock}</span>
       <span>${adminMoney.format(item.price, "AUD")}</span>
     </button>
@@ -505,6 +499,7 @@ function renderBuilderInventory() {
       <button type="button" data-delete="settings.${key}.${adminState.ui.selectedBuilderItem}">Delete</button>
     </div>
     <img class="admin-editor-image" src="${item.image}" alt="${escapeHtml(item.title)}">
+    <label>Show in Creation Lab ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.active`, item.active !== false, "checkbox")}</label>
     <label>Title ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.title`, item.title)}</label>
     <label>ID / SKU ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.id`, item.id || "")}</label>
     ${key === "builderBases" ? `
@@ -518,9 +513,12 @@ function renderBuilderInventory() {
       </label>
     ` : ""}
     <label>Image path ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.image`, item.image)}</label>
+    <label>Transparent cutout path ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.cutoutImage`, item.cutoutImage || "")}</label>
+    <label>Admin notes / product details ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.description`, item.description || "", "textarea")}</label>
     <div class="admin-edit-grid">
       <label>Single item price ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.price`, item.price, "number")}</label>
       <label>Available amount ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.stock`, item.stock, "number")}</label>
+      <label>Default display scale ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.scale`, item.scale || 1, "number")}</label>
     </div>
   `;
 }
@@ -667,12 +665,33 @@ function bindAdmin() {
     if (event.target.id === "addSaleButton") adminState.settings.sales.push({ title: "Seasonal sale", copy: "Add seasonal promotion details here.", cta: "Shop now", active: true });
     if (event.target.id === "addSetButton") adminState.settings.sets.push({ id: `set-${Date.now()}`, title: "New Set", price: 0, stock: 0, image: "assets/products/uniform/heart-stars-charm-chain-necklace.jpg", description: "Set details.", active: true });
     if (event.target.id === "addBuilderBaseButton") {
-      adminState.settings.builderBases.push({ id: `base-${Date.now()}`, type: "bracelet", title: "New Base", price: 0, stock: 0, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" });
+      adminState.settings.builderBases.push({
+        id: `base-${Date.now()}`,
+        type: "bracelet",
+        title: "New Base",
+        price: 0,
+        stock: 0,
+        image: "",
+        cutoutImage: "",
+        active: true,
+        scale: 1,
+        description: "Upload the correct transparent base image before showing this base on the storefront.",
+      });
       adminState.ui.builderType = "builderBases";
       adminState.ui.selectedBuilderItem = adminState.settings.builderBases.length - 1;
     }
     if (event.target.id === "addBuilderCharmButton") {
-      adminState.settings.builderCharms.push({ id: `charm-${Date.now()}`, title: "New Charm", price: 0, stock: 0, image: "assets/products/uniform/sweet-cherry-pair-charm.jpg" });
+      adminState.settings.builderCharms.push({
+        id: `charm-${Date.now()}`,
+        title: "New Charm",
+        price: 0,
+        stock: 0,
+        image: "",
+        cutoutImage: "",
+        active: true,
+        scale: 1,
+        description: "Upload the product image and transparent charm cutout.",
+      });
       adminState.ui.builderType = "builderCharms";
       adminState.ui.selectedBuilderItem = adminState.settings.builderCharms.length - 1;
     }
