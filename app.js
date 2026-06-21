@@ -4,8 +4,14 @@ const money = {
   }
 };
 
-const DATA_VERSION = "ametopia-creation-lab-bases-admin-2026-06-21";
+const DATA_VERSION = "ametopia-product-scale-disclaimer-2026-06-21";
 const baseProducts = Array.isArray(window.AMETOPIA_PRODUCTS) ? window.AMETOPIA_PRODUCTS : [];
+const builderBaseCutouts = {
+  "red-rope-gold-chain-bracelet": "assets/products/base-cutouts/red-rope-gold-chain-bracelet.png",
+  "gold-bead-ball-chain-bracelet": "assets/products/base-cutouts/gold-bead-ball-chain-bracelet.png",
+  "gold-curb-chain-carabiner-necklace": "assets/products/base-cutouts/gold-curb-chain-carabiner-necklace.png",
+  "gold-snake-chain-ring-clasp-necklace": "assets/products/base-cutouts/gold-snake-chain-ring-clasp-necklace.png",
+};
 
 function safeJson(key, fallback) {
   try {
@@ -95,18 +101,23 @@ function normalizedBuilderItems(storedItems, defaultItems) {
 }
 
 function productToBuilderItem(product) {
+  const isBase = product.category === "Chains";
   return {
     id: product.id,
     title: product.title,
-    type: product.category === "Chains" ? inferBaseType(product) : undefined,
+    type: isBase ? inferBaseType(product) : undefined,
     price: Number(product.price || 0),
     stock: Number(product.stock || 0),
     image: product.image,
+    cutoutImage: isBase ? builderBaseCutouts[product.id] || product.image : undefined,
+    scale: isBase ? 1 : undefined,
   };
 }
 
 function productsForBuilderBases(products) {
-  return [];
+  return products
+    .filter((product) => product.category === "Chains" && inferBaseType(product) !== "key-chain")
+    .map(productToBuilderItem);
 }
 
 function productsForBuilderCharms(products) {
@@ -283,6 +294,7 @@ function productCard(product) {
           <span>${escapeHtml(product.title)}</span><span class="price-stack">${priceLabel}</span>
         </button>
         <div class="product-meta">${escapeHtml(product.description)}</div>
+        <p class="product-scale-note">Photo enlarged for detail. Actual size may differ from on-screen display.</p>
         <div class="rating">${product.stock <= 0 ? "Sold out" : product.stock <= 3 ? "Low in stock" : ""}</div>
         <div class="purchase-row">
           <label>Qty <input type="number" min="1" max="${Math.max(1, product.stock)}" value="1" data-card-qty="${product.id}"></label>
@@ -480,7 +492,7 @@ function openProduct(product) {
           <button class="zoom-trigger" data-zoom-src="${product.image}" data-zoom-alt="${escapeHtml(product.title)}">
             <img class="modal-product-image" src="${product.image}" alt="${escapeHtml(product.title)}">
           </button>
-          <p class="payment-note">Click photo to zoom.</p>
+          <p class="payment-note">Click photo to zoom. Product image may be enlarged to show detail.</p>
         </div>
         <div>
           <p class="kicker">${escapeHtml(product.category)}</p>
@@ -488,6 +500,7 @@ function openProduct(product) {
           <p>${escapeHtml(product.description)}</p>
           <p><strong>${money.format(product.salePrice && Number(product.salePrice) > 0 ? product.salePrice : product.price, product.currency)}</strong>${product.salePrice && Number(product.salePrice) > 0 ? ` <s>${money.format(product.price, product.currency)}</s>` : ""}</p>
           <p>${product.stock <= 0 ? "Sold out" : product.stock <= 3 ? "Low in stock" : "In stock"}</p>
+          <p class="product-scale-note">Photos are enlarged for detail and may appear larger than actual charm size. Please review the listed product details before checkout.</p>
           <label>Quantity <input type="number" min="1" max="${Math.max(1, product.stock)}" value="1" data-modal-qty="${product.id}"></label>
           <button class="primary-button" data-add="${product.id}" ${product.stock < 1 ? "disabled" : ""}>Add to bag</button>
         </div>
@@ -591,6 +604,7 @@ function renderBuilderPreview() {
       <p>${base ? escapeHtml(base.title) : `Choose a ${typeLabel}`} ${selectedCharms.length ? "with " + selectedCharms.map(({ item }) => item.title).join(", ") : "ready for charms."}</p>
       ${state.builder.swapIndex !== null ? `<p class="builder-note">Choose any charm below to replace the selected charm.</p>` : ""}
       <strong>${money.format(total, "AUD")}</strong>
+      <p class="product-scale-note">Preview is not actual scale. We assemble each design as close as reasonably possible to your selected placement.</p>
       <div class="builder-actions">
         <button class="primary-button" data-builder-add ${!base || !selectedCharms.length ? "disabled" : ""}>Add creation to bag</button>
         <button class="secondary-button" data-builder-clear type="button">Reset</button>

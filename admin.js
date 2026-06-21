@@ -4,8 +4,14 @@ const adminMoney = {
   }
 };
 
-const DATA_VERSION = "ametopia-creation-lab-bases-admin-2026-06-21";
+const DATA_VERSION = "ametopia-product-scale-disclaimer-2026-06-21";
 const baseProducts = Array.isArray(window.AMETOPIA_PRODUCTS) ? window.AMETOPIA_PRODUCTS : [];
+const builderBaseCutouts = {
+  "red-rope-gold-chain-bracelet": "assets/products/base-cutouts/red-rope-gold-chain-bracelet.png",
+  "gold-bead-ball-chain-bracelet": "assets/products/base-cutouts/gold-bead-ball-chain-bracelet.png",
+  "gold-curb-chain-carabiner-necklace": "assets/products/base-cutouts/gold-curb-chain-carabiner-necklace.png",
+  "gold-snake-chain-ring-clasp-necklace": "assets/products/base-cutouts/gold-snake-chain-ring-clasp-necklace.png",
+};
 
 function readJson(key, fallback) {
   try {
@@ -116,6 +122,7 @@ function defaultSettings() {
       returns: "Customer rights under Australian Consumer Law are not excluded. Faulty goods may be eligible for repair, replacement, refund, or other remedy.",
       privacy: "Customer details are used to process orders, wishlist alerts, restock emails, and customer support.",
       shipping: "Orders over A$100 ship free within Australia via standard Australia Post. Express Australia Post is available at the current configured rate.",
+      productImages: "Product photos may be enlarged, cropped, digitally arranged, or shown under different lighting to display detail. Creation Lab previews are styling guides only and do not guarantee exact final scale, spacing, or placement.",
     },
   };
 }
@@ -147,18 +154,23 @@ function normalizedBuilderItems(storedItems, defaultItems) {
 }
 
 function productToBuilderItem(product) {
+  const isBase = product.category === "Chains";
   return {
     id: product.id,
     title: product.title,
-    type: product.category === "Chains" ? inferBaseType(product) : undefined,
+    type: isBase ? inferBaseType(product) : undefined,
     price: Number(product.price || 0),
     stock: Number(product.stock || 0),
     image: product.image,
+    cutoutImage: isBase ? builderBaseCutouts[product.id] || product.image : undefined,
+    scale: isBase ? 1 : undefined,
   };
 }
 
 function productsForBuilderBases(products) {
-  return [];
+  return products
+    .filter((product) => product.category === "Chains" && inferBaseType(product) !== "key-chain")
+    .map(productToBuilderItem);
 }
 
 function productsForBuilderCharms(products) {
