@@ -92,9 +92,41 @@ function normalizedBuilderBases(storedBases, defaultBases) {
   return merged.map((item) => ({ ...item, type: item.type || inferBaseType(item) }));
 }
 
+function normalizedBuilderItems(storedItems, defaultItems) {
+  const source = Array.isArray(storedItems) && storedItems.length ? storedItems : defaultItems;
+  const merged = [...source];
+  defaultItems.forEach((item) => {
+    if (!merged.some((candidate) => candidate.id === item.id)) merged.push(item);
+  });
+  return merged;
+}
+
+function productToBuilderItem(product) {
+  return {
+    id: product.id,
+    title: product.title,
+    type: product.category === "Chains" ? inferBaseType(product) : undefined,
+    price: Number(product.price || 0),
+    stock: Number(product.stock || 0),
+    image: product.image,
+  };
+}
+
+function productsForBuilderBases(products) {
+  return products.filter((product) => product.category === "Chains").map(productToBuilderItem);
+}
+
+function productsForBuilderCharms(products) {
+  return products
+    .filter((product) => ["Beads", "Charms"].includes(product.category))
+    .map(productToBuilderItem);
+}
+
 function readStoreSettings() {
   const defaults = defaultStoreSettings();
   const stored = safeJson("ametopiaSettings", {});
+  const defaultBases = normalizedBuilderBases(defaults.builderBases, productsForBuilderBases(baseProducts));
+  const defaultCharms = normalizedBuilderItems(defaults.builderCharms, productsForBuilderCharms(baseProducts));
   return {
     ...defaults,
     ...stored,
@@ -103,8 +135,8 @@ function readStoreSettings() {
     sales: stored.sales || defaults.sales,
     pageSections: stored.pageSections || defaults.pageSections,
     sets: stored.sets || defaults.sets,
-    builderBases: normalizedBuilderBases(stored.builderBases, defaults.builderBases),
-    builderCharms: stored.builderCharms || defaults.builderCharms,
+    builderBases: normalizedBuilderBases(stored.builderBases, defaultBases),
+    builderCharms: normalizedBuilderItems(stored.builderCharms, defaultCharms),
     builderButtonEffect: stored.builderButtonEffect || defaults.builderButtonEffect,
   };
 }
@@ -134,6 +166,7 @@ const state = {
 };
 
 const builderDrag = { index: null, pointerId: null, item: null, canvas: null };
+const builderRotateDrag = { index: null, pointerId: null, item: null, startX: 0, startRotate: 0, moved: false, clickDelta: 0 };
 
 const initialFilter = new URLSearchParams(window.location.search).get("filter");
 if (initialFilter) state.filter = initialFilter;
@@ -760,12 +793,6 @@ function bindGlobalEvents() {
       renderBuilderPage();
     }
 
-    const rotateBuilderItem = event.target.closest("[data-builder-rotate-index]");
-    if (rotateBuilderItem) {
-      rotateBuilderCharm(Number(rotateBuilderItem.dataset.builderRotateIndex), Number(rotateBuilderItem.dataset.builderRotate));
-      renderBuilderPage();
-    }
-
     const charmButton = event.target.closest("[data-builder-charm]");
     if (charmButton) {
       state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
@@ -811,6 +838,27 @@ function bindGlobalEvents() {
   });
 
   document.addEventListener("pointerdown", (event) => {
+    const rotateButton = event.target.closest("[data-builder-rotate-index]");
+    if (rotateButton) {
+      const item = rotateButton.closest("[data-builder-drag-index]");
+      if (!item) return;
+      const index = Number(rotateButton.dataset.builderRotateIndex);
+      const anchors = builderAnchors(state.builder.baseType || "bracelet", (state.builder.charms || []).length);
+      const previous = state.builder.positions?.[index] || {};
+      const anchor = anchors[index] || { rotate: 0 };
+      builderRotateDrag.index = index;
+      builderRotateDrag.pointerId = event.pointerId;
+      builderRotateDrag.item = item;
+      builderRotateDrag.startX = event.clientX;
+      builderRotateDrag.startRotate = Number.isFinite(previous.rotate) ? previous.rotate : Number(anchor.rotate || 0);
+      builderRotateDrag.moved = false;
+      builderRotateDrag.clickDelta = Number(rotateButton.dataset.builderRotate || 0);
+      item.classList.add("rotating");
+      rotateButton.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+      return;
+    }
+
     const item = event.target.closest("[data-builder-drag-index]");
     if (!item || event.target.closest("button")) return;
     const canvas = item.closest(".creation-canvas");
@@ -826,12 +874,18 @@ function bindGlobalEvents() {
   });
 
   document.addEventListener("pointermove", (event) => {
+    if (builderRotateDrag.index !== null && builderRotateDrag.pointerId === event.pointerId) {
+      updateBuilderRotatePosition(event);
+      return;
+    }
     if (builderDrag.index === null || builderDrag.pointerId !== event.pointerId) return;
     updateBuilderDragPosition(event);
   });
 
   document.addEventListener("pointerup", endBuilderDrag);
   document.addEventListener("pointercancel", endBuilderDrag);
+  document.addEventListener("pointerup", endBuilderRotate);
+  document.addEventListener("pointercancel", endBuilderRotate);
 
   document.addEventListener("input", (event) => {
     if (event.target.matches("[data-delivery-select]")) {
@@ -861,6 +915,34 @@ function rotateBuilderCharm(index, delta) {
   const current = Number.isFinite(previous.rotate) ? previous.rotate : Number(anchor.rotate || 0);
   const next = Math.max(-75, Math.min(75, current + delta));
   state.builder.positions[index] = { ...previous, rotate: next };
+}
+
+function updateBuilderRotatePosition(event) {
+  if (!builderRotateDrag.item) return;
+  const distance = event.clientX - builderRotateDrag.startX;
+  if (Math.abs(distance) > 2) builderRotateDrag.moved = true;
+  const next = Math.max(-85, Math.min(85, builderRotateDrag.startRotate + distance * 0.55));
+  state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
+  const previous = state.builder.positions[builderRotateDrag.index] || {};
+  state.builder.positions[builderRotateDrag.index] = { ...previous, rotate: Number(next.toFixed(1)) };
+  builderRotateDrag.item.style.setProperty("--r", `${next}deg`);
+}
+
+function endBuilderRotate(event) {
+  if (builderRotateDrag.index === null || builderRotateDrag.pointerId !== event.pointerId) return;
+  if (!builderRotateDrag.moved) {
+    rotateBuilderCharm(builderRotateDrag.index, builderRotateDrag.clickDelta);
+    const rotate = state.builder.positions[builderRotateDrag.index]?.rotate || 0;
+    builderRotateDrag.item?.style.setProperty("--r", `${rotate}deg`);
+  }
+  builderRotateDrag.item?.classList.remove("rotating");
+  builderRotateDrag.index = null;
+  builderRotateDrag.pointerId = null;
+  builderRotateDrag.item = null;
+  builderRotateDrag.startX = 0;
+  builderRotateDrag.startRotate = 0;
+  builderRotateDrag.moved = false;
+  builderRotateDrag.clickDelta = 0;
 }
 
 function endBuilderDrag(event) {

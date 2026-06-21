@@ -973,8 +973,12 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   z-index: 8;
   cursor: grabbing;
 }
-.creation-item.dragging .charm-photo {
+.creation-item.dragging .charm-photo,
+.creation-item.rotating .charm-photo {
   filter: drop-shadow(0 20px 20px rgba(70, 52, 44, 0.28));
+}
+.creation-item.rotating {
+  z-index: 9;
 }
 .charm-connector {
   width: 2px;
@@ -1044,6 +1048,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   height: 24px;
   border-radius: 50%;
   font-size: 13px;
+  cursor: ew-resize;
 }
 .builder-note {
   color: var(--brown);

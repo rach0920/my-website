@@ -143,9 +143,41 @@ function normalizedBuilderBases(storedBases, defaultBases) {
   return merged.map((item) => ({ ...item, type: item.type || inferBaseType(item) }));
 }
 
+function normalizedBuilderItems(storedItems, defaultItems) {
+  const source = Array.isArray(storedItems) && storedItems.length ? storedItems : defaultItems;
+  const merged = [...source];
+  defaultItems.forEach((item) => {
+    if (!merged.some((candidate) => candidate.id === item.id)) merged.push(item);
+  });
+  return merged;
+}
+
+function productToBuilderItem(product) {
+  return {
+    id: product.id,
+    title: product.title,
+    type: product.category === "Chains" ? inferBaseType(product) : undefined,
+    price: Number(product.price || 0),
+    stock: Number(product.stock || 0),
+    image: product.image,
+  };
+}
+
+function productsForBuilderBases(products) {
+  return products.filter((product) => product.category === "Chains").map(productToBuilderItem);
+}
+
+function productsForBuilderCharms(products) {
+  return products
+    .filter((product) => ["Beads", "Charms"].includes(product.category))
+    .map(productToBuilderItem);
+}
+
 function mergedSettings() {
   const defaults = defaultSettings();
   const stored = readJson("ametopiaSettings", {});
+  const defaultBases = normalizedBuilderBases(defaults.builderBases, productsForBuilderBases(baseProducts));
+  const defaultCharms = normalizedBuilderItems(defaults.builderCharms, productsForBuilderCharms(baseProducts));
   return {
     ...defaults,
     ...stored,
@@ -157,8 +189,8 @@ function mergedSettings() {
     sales: stored.sales || defaults.sales,
     pageSections: stored.pageSections || defaults.pageSections,
     sets: stored.sets || defaults.sets,
-    builderBases: normalizedBuilderBases(stored.builderBases, defaults.builderBases),
-    builderCharms: stored.builderCharms || defaults.builderCharms,
+    builderBases: normalizedBuilderBases(stored.builderBases, defaultBases),
+    builderCharms: normalizedBuilderItems(stored.builderCharms, defaultCharms),
     builderButtonEffect: stored.builderButtonEffect || defaults.builderButtonEffect,
   };
 }
