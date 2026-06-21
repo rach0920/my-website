@@ -972,17 +972,19 @@ function playBuilderEffect(target) {
   const effect = state.settings.builderButtonEffect || "magic";
   if (effect === "off") return;
   const rect = target.getBoundingClientRect();
-  const symbols = effect === "hearts" ? ["\u2665", "\u2661", "\u2665"] : effect === "paws" ? ["\u{1F43E}", "\u2726", "\u{1F43E}"] : ["\u2726", "\u2605", "\u2727", "\u{1FA84}"];
-  for (let index = 0; index < 14; index += 1) {
+  const symbols = effect === "hearts" ? ["\u2665", "\u2661", "\u2665"] : effect === "paws" ? ["\u{1F43E}", "\u2726", "\u{1F43E}"] : ["\u2726", "\u2727", "\u22c6", "\u2728", "\u{1FA84}"];
+  const count = effect === "magic" ? 24 : 14;
+  for (let index = 0; index < count; index += 1) {
     const particle = document.createElement("span");
     particle.className = `click-particle ${effect}`;
     particle.textContent = symbols[index % symbols.length];
     particle.style.left = `${rect.left + rect.width / 2}px`;
     particle.style.top = `${rect.top + rect.height / 2}px`;
-    particle.style.setProperty("--x", `${(Math.random() - 0.5) * 170}px`);
-    particle.style.setProperty("--y", `${-40 - Math.random() * 120}px`);
+    particle.style.fontSize = effect === "magic" ? `${14 + Math.random() * 16}px` : "";
+    particle.style.setProperty("--x", `${(Math.random() - 0.5) * (effect === "magic" ? 230 : 170)}px`);
+    particle.style.setProperty("--y", `${-34 - Math.random() * (effect === "magic" ? 165 : 120)}px`);
     document.body.appendChild(particle);
-    setTimeout(() => particle.remove(), 900);
+    setTimeout(() => particle.remove(), effect === "magic" ? 1150 : 900);
   }
 }
 
