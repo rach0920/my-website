@@ -39,18 +39,24 @@
 
     <main>
       <section class="builder-page">
-        <div class="section-heading">
+        <div class="section-heading builder-lab-head">
           <div>
-            <p class="kicker">Charm builder</p>
-            <h1>Create your own Ametopia piece</h1>
-            <p class="section-copy">Choose a base, add charm quantities, preview the final creation, then proceed, keep editing, or cancel.</p>
+            <p class="kicker">Ametopia Design Lab</p>
+            <h1>Design your own charm piece</h1>
+            <p class="section-copy">Choose a bracelet, necklace, key chain, or bag chain base. Add, remove, or swap charms until it feels completely yours, then add the finished design to your bag.</p>
+          </div>
+          <div class="builder-steps" aria-label="Design steps">
+            <span>1 Choose base</span>
+            <span>2 Add charms</span>
+            <span>3 Checkout together</span>
           </div>
         </div>
         <div class="builder-layout">
           <section>
-            <h2>Choose a base</h2>
+            <h2>Choose your base</h2>
+            <div class="builder-type-bar" id="builderTypeBar" aria-label="Base type"></div>
             <div class="builder-choice-grid" id="builderBaseGrid"></div>
-            <h2>Choose charms</h2>
+            <h2>Add or swap charms</h2>
             <div class="builder-choice-grid" id="builderCharmGrid"></div>
           </section>
           <aside class="builder-preview" id="builderPreview"></aside>

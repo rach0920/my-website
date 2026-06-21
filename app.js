@@ -58,9 +58,12 @@ function defaultStoreSettings() {
       },
     ],
     builderBases: [
-      { id: "gold-curb-chain-carabiner-necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-      { id: "gold-bead-ball-chain-bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
-      { id: "red-rope-gold-chain-bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
+      { id: "gold-bead-ball-chain-bracelet", type: "bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
+      { id: "red-rope-gold-chain-bracelet", type: "bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
+      { id: "gold-curb-chain-carabiner-necklace", type: "necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
+      { id: "gold-snake-chain-ring-clasp-necklace", type: "necklace", title: "Gold Snake Chain Ring Clasp Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-snake-chain-ring-clasp-necklace.jpg" },
+      { id: "custom-key-chain-base", type: "key-chain", title: "Gold Key Chain Base", price: 12.99, stock: 20, image: "assets/products/uniform/golden-key-heart-charm.jpg" },
+      { id: "custom-bag-chain-base", type: "bag-chain", title: "Gold Bag Chain Base", price: 18.99, stock: 20, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
     ],
     builderCharms: [
       { id: "sweet-cherry-pair-charm", title: "Sweet Cherry Pair Charm", price: 24.99, stock: 10, image: "assets/products/uniform/sweet-cherry-pair-charm.jpg" },
@@ -70,6 +73,23 @@ function defaultStoreSettings() {
     ],
     builderButtonEffect: "magic",
   };
+}
+
+function inferBaseType(item) {
+  const text = `${item?.title || ""} ${item?.id || ""}`.toLowerCase();
+  if (text.includes("bracelet")) return "bracelet";
+  if (text.includes("key")) return "key-chain";
+  if (text.includes("bag")) return "bag-chain";
+  return "necklace";
+}
+
+function normalizedBuilderBases(storedBases, defaultBases) {
+  const source = Array.isArray(storedBases) && storedBases.length ? storedBases : defaultBases;
+  const merged = [...source];
+  defaultBases.forEach((base) => {
+    if (!merged.some((item) => item.id === base.id)) merged.push(base);
+  });
+  return merged.map((item) => ({ ...item, type: item.type || inferBaseType(item) }));
 }
 
 function readStoreSettings() {
@@ -83,7 +103,7 @@ function readStoreSettings() {
     sales: stored.sales || defaults.sales,
     pageSections: stored.pageSections || defaults.pageSections,
     sets: stored.sets || defaults.sets,
-    builderBases: stored.builderBases || defaults.builderBases,
+    builderBases: normalizedBuilderBases(stored.builderBases, defaults.builderBases),
     builderCharms: stored.builderCharms || defaults.builderCharms,
     builderButtonEffect: stored.builderButtonEffect || defaults.builderButtonEffect,
   };
@@ -110,7 +130,7 @@ const state = {
   filter: "all",
   promo: "",
   delivery: "standard",
-  builder: { baseId: "", charmQty: {} },
+  builder: { baseId: "", baseType: "bracelet", charms: [], swapIndex: null },
 };
 
 const initialFilter = new URLSearchParams(window.location.search).get("filter");
@@ -467,20 +487,40 @@ function renderBuilderPage() {
   const charmGrid = document.querySelector("#builderCharmGrid");
   if (!baseGrid || !charmGrid) return;
   refreshSettings();
-  if (!state.builder.baseId) state.builder.baseId = state.settings.builderBases[0]?.id || "";
-  baseGrid.innerHTML = state.settings.builderBases.map((item) => `
+  state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
+  const typeLabels = {
+    bracelet: "Bracelet",
+    necklace: "Necklace",
+    "key-chain": "Key chain",
+    "bag-chain": "Bag chain",
+  };
+  const baseTypes = ["bracelet", "necklace", "key-chain", "bag-chain"];
+  if (!state.builder.baseType) state.builder.baseType = "bracelet";
+  const basesForType = state.settings.builderBases.filter((item) => (item.type || inferBaseType(item)) === state.builder.baseType);
+  if (!basesForType.some((item) => item.id === state.builder.baseId)) state.builder.baseId = basesForType[0]?.id || state.settings.builderBases[0]?.id || "";
+  const typeBar = document.querySelector("#builderTypeBar");
+  if (typeBar) {
+    typeBar.innerHTML = baseTypes.map((type) => `
+      <button type="button" class="${state.builder.baseType === type ? "active" : ""}" data-builder-type="${type}">
+        ${typeLabels[type]}
+      </button>
+    `).join("");
+  }
+  baseGrid.innerHTML = basesForType.map((item) => `
     <button class="builder-choice ${state.builder.baseId === item.id ? "active" : ""}" data-builder-base="${item.id}">
       <img src="${item.image}" alt="${escapeHtml(item.title)}">
       <strong>${escapeHtml(item.title)}</strong>
       <span>${money.format(item.price, "AUD")} \u00b7 ${item.stock} available</span>
     </button>
-  `).join("");
+  `).join("") || `<div class="empty">No bases in this category yet.</div>`;
   charmGrid.innerHTML = state.settings.builderCharms.map((item) => `
     <article class="builder-choice">
       <img src="${item.image}" alt="${escapeHtml(item.title)}">
       <strong>${escapeHtml(item.title)}</strong>
       <span>${money.format(item.price, "AUD")} \u00b7 ${item.stock} available</span>
-      <label>Qty <input type="number" min="0" max="${item.stock}" value="${state.builder.charmQty[item.id] || 0}" data-builder-charm="${item.id}"></label>
+      <button type="button" data-builder-charm="${item.id}">
+        ${state.builder.swapIndex !== null ? "Use to replace" : "Add charm"}
+      </button>
     </article>
   `).join("");
   renderBuilderPreview();
@@ -491,28 +531,36 @@ function renderBuilderPreview() {
   if (!preview) return;
   refreshSettings();
   const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId);
-  const charms = state.settings.builderCharms
-    .map((item) => ({ ...item, qty: Number(state.builder.charmQty[item.id] || 0) }))
-    .filter((item) => item.qty > 0);
-  const total = (base?.price || 0) + charms.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const selectedCharms = (state.builder.charms || [])
+    .map((id, index) => ({ item: state.settings.builderCharms.find((charm) => charm.id === id), index }))
+    .filter(({ item }) => item);
+  const total = (base?.price || 0) + selectedCharms.reduce((sum, { item }) => sum + item.price, 0);
+  const typeLabel = {
+    bracelet: "bracelet",
+    necklace: "necklace",
+    "key-chain": "key chain",
+    "bag-chain": "bag chain",
+  }[state.builder.baseType || "bracelet"];
   preview.innerHTML = `
-    <div class="creation-canvas">
+    <div class="creation-canvas designer-canvas ${escapeHtml(state.builder.baseType || "bracelet")}">
       ${base ? `<img class="creation-base" src="${base.image}" alt="${escapeHtml(base.title)}">` : ""}
       <div class="creation-charms">
-        ${charms.flatMap((item) => Array.from({ length: item.qty }, (_, index) => `
-          <span class="creation-item">
+        ${selectedCharms.map(({ item, index }) => `
+          <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}">
             <img src="${item.image}" alt="${escapeHtml(item.title)}">
-            <button type="button" data-builder-remove="${item.id}" aria-label="Remove ${escapeHtml(item.title)}">\u2212</button>
+            <button type="button" data-builder-remove-index="${index}" aria-label="Remove ${escapeHtml(item.title)}">\u2212</button>
+            <button type="button" class="swap-button" data-builder-swap-index="${index}">Swap</button>
           </span>
-        `)).join("")}
+        `).join("")}
       </div>
     </div>
     <div>
       <h3>Your creation</h3>
-      <p>${base ? escapeHtml(base.title) : "Choose a base"}${charms.length ? " with " + charms.map((item) => `${item.qty} ${item.title}`).join(", ") : ""}</p>
+      <p>${base ? escapeHtml(base.title) : `Choose a ${typeLabel}`} ${selectedCharms.length ? "with " + selectedCharms.map(({ item }) => item.title).join(", ") : "ready for charms."}</p>
+      ${state.builder.swapIndex !== null ? `<p class="builder-note">Choose any charm below to replace the selected charm.</p>` : ""}
       <strong>${money.format(total, "AUD")}</strong>
       <div class="builder-actions">
-        <button class="primary-button" data-builder-add ${!base ? "disabled" : ""}>Proceed</button>
+        <button class="primary-button" data-builder-add ${!base || !selectedCharms.length ? "disabled" : ""}>Add creation to bag</button>
         <button class="secondary-button" data-builder-clear type="button">Reset</button>
         <a class="secondary-link" href="index.html">Cancel</a>
       </div>
@@ -587,6 +635,13 @@ function bindGlobalEvents() {
       document.querySelector("#imageZoomDialog").showModal();
     }
 
+    const typeButton = event.target.closest("[data-builder-type]");
+    if (typeButton) {
+      state.builder.baseType = typeButton.dataset.builderType;
+      state.builder.baseId = "";
+      renderBuilderPage();
+    }
+
     const baseButton = event.target.closest("[data-builder-base]");
     if (baseButton) {
       state.builder.baseId = baseButton.dataset.builderBase;
@@ -594,25 +649,44 @@ function bindGlobalEvents() {
     }
 
     if (event.target.closest("[data-builder-clear]")) {
-      state.builder.charmQty = {};
+      state.builder.charms = [];
+      state.builder.swapIndex = null;
       renderBuilderPage();
     }
 
-    const removeBuilderItem = event.target.closest("[data-builder-remove]");
+    const removeBuilderItem = event.target.closest("[data-builder-remove-index]");
     if (removeBuilderItem) {
-      const id = removeBuilderItem.dataset.builderRemove;
-      state.builder.charmQty[id] = Math.max(0, Number(state.builder.charmQty[id] || 0) - 1);
+      state.builder.charms.splice(Number(removeBuilderItem.dataset.builderRemoveIndex), 1);
+      state.builder.swapIndex = null;
+      renderBuilderPage();
+    }
+
+    const swapBuilderItem = event.target.closest("[data-builder-swap-index]");
+    if (swapBuilderItem) {
+      state.builder.swapIndex = Number(swapBuilderItem.dataset.builderSwapIndex);
+      renderBuilderPage();
+    }
+
+    const charmButton = event.target.closest("[data-builder-charm]");
+    if (charmButton) {
+      state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
+      if (state.builder.swapIndex !== null && state.builder.charms[state.builder.swapIndex]) {
+        state.builder.charms[state.builder.swapIndex] = charmButton.dataset.builderCharm;
+        state.builder.swapIndex = null;
+      } else {
+        state.builder.charms.push(charmButton.dataset.builderCharm);
+      }
       renderBuilderPage();
     }
 
     if (event.target.closest("[data-builder-add]")) {
       refreshSettings();
       const base = state.settings.builderBases.find((item) => item.id === state.builder.baseId);
-      const charms = state.settings.builderCharms
-        .map((item) => ({ ...item, qty: Number(state.builder.charmQty[item.id] || 0) }))
-        .filter((item) => item.qty > 0);
-      const total = (base?.price || 0) + charms.reduce((sum, item) => sum + item.price * item.qty, 0);
-      const title = `${base?.title || "Custom base"} creation`;
+      const charms = (state.builder.charms || [])
+        .map((id) => state.settings.builderCharms.find((item) => item.id === id))
+        .filter(Boolean);
+      const total = (base?.price || 0) + charms.reduce((sum, item) => sum + item.price, 0);
+      const title = `Custom ${base?.title || "Ametopia"} design`;
       addToCart(`custom-${Date.now()}`, {
         id: `custom-${Date.now()}`,
         title,
@@ -621,7 +695,7 @@ function bindGlobalEvents() {
         currency: "AUD",
         image: base?.image || "assets/products/uniform/heart-stars-charm-chain-necklace.jpg",
         stock: 99,
-        description: charms.map((item) => `${item.qty} x ${item.title}`).join(", ") || "Custom charm builder piece",
+        description: charms.map((item) => item.title).join(", ") || "Custom charm builder piece",
       });
     }
 
@@ -639,10 +713,6 @@ function bindGlobalEvents() {
     if (event.target.matches("[data-delivery-select]")) {
       state.delivery = event.target.value;
       renderCart();
-    }
-    if (event.target.matches("[data-builder-charm]")) {
-      state.builder.charmQty[event.target.dataset.builderCharm] = Number(event.target.value);
-      renderBuilderPreview();
     }
   });
 }

@@ -91,9 +91,12 @@ function defaultSettings() {
       },
     ],
     builderBases: [
-      { id: "gold-curb-chain-carabiner-necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
-      { id: "gold-bead-ball-chain-bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
-      { id: "red-rope-gold-chain-bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
+      { id: "gold-bead-ball-chain-bracelet", type: "bracelet", title: "Gold Bead Ball Chain Bracelet", price: 16.99, stock: 10, image: "assets/products/uniform/gold-bead-ball-chain-bracelet.jpg" },
+      { id: "red-rope-gold-chain-bracelet", type: "bracelet", title: "Red Rope Gold Chain Bracelet", price: 19.99, stock: 10, image: "assets/products/uniform/red-rope-gold-chain-bracelet.jpg" },
+      { id: "gold-curb-chain-carabiner-necklace", type: "necklace", title: "Gold Curb Chain Carabiner Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
+      { id: "gold-snake-chain-ring-clasp-necklace", type: "necklace", title: "Gold Snake Chain Ring Clasp Necklace", price: 29.99, stock: 10, image: "assets/products/uniform/gold-snake-chain-ring-clasp-necklace.jpg" },
+      { id: "custom-key-chain-base", type: "key-chain", title: "Gold Key Chain Base", price: 12.99, stock: 20, image: "assets/products/uniform/golden-key-heart-charm.jpg" },
+      { id: "custom-bag-chain-base", type: "bag-chain", title: "Gold Bag Chain Base", price: 18.99, stock: 20, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" },
     ],
     builderCharms: [
       { id: "sweet-cherry-pair-charm", title: "Sweet Cherry Pair Charm", price: 24.99, stock: 10, image: "assets/products/uniform/sweet-cherry-pair-charm.jpg" },
@@ -123,6 +126,23 @@ function defaultSettings() {
   };
 }
 
+function inferBaseType(item) {
+  const text = `${item?.title || ""} ${item?.id || ""}`.toLowerCase();
+  if (text.includes("bracelet")) return "bracelet";
+  if (text.includes("key")) return "key-chain";
+  if (text.includes("bag")) return "bag-chain";
+  return "necklace";
+}
+
+function normalizedBuilderBases(storedBases, defaultBases) {
+  const source = Array.isArray(storedBases) && storedBases.length ? storedBases : defaultBases;
+  const merged = [...source];
+  defaultBases.forEach((base) => {
+    if (!merged.some((item) => item.id === base.id)) merged.push(base);
+  });
+  return merged.map((item) => ({ ...item, type: item.type || inferBaseType(item) }));
+}
+
 function mergedSettings() {
   const defaults = defaultSettings();
   const stored = readJson("ametopiaSettings", {});
@@ -137,7 +157,7 @@ function mergedSettings() {
     sales: stored.sales || defaults.sales,
     pageSections: stored.pageSections || defaults.pageSections,
     sets: stored.sets || defaults.sets,
-    builderBases: stored.builderBases || defaults.builderBases,
+    builderBases: normalizedBuilderBases(stored.builderBases, defaults.builderBases),
     builderCharms: stored.builderCharms || defaults.builderCharms,
     builderButtonEffect: stored.builderButtonEffect || defaults.builderButtonEffect,
   };
@@ -455,6 +475,16 @@ function renderBuilderInventory() {
     <img class="admin-editor-image" src="${item.image}" alt="${escapeHtml(item.title)}">
     <label>Title ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.title`, item.title)}</label>
     <label>ID / SKU ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.id`, item.id || "")}</label>
+    ${key === "builderBases" ? `
+      <label>Base type
+        <select data-edit="settings.${key}.${adminState.ui.selectedBuilderItem}.type">
+          <option value="bracelet" ${(item.type || inferBaseType(item)) === "bracelet" ? "selected" : ""}>Bracelet</option>
+          <option value="necklace" ${(item.type || inferBaseType(item)) === "necklace" ? "selected" : ""}>Necklace</option>
+          <option value="key-chain" ${(item.type || inferBaseType(item)) === "key-chain" ? "selected" : ""}>Key chain</option>
+          <option value="bag-chain" ${(item.type || inferBaseType(item)) === "bag-chain" ? "selected" : ""}>Bag chain</option>
+        </select>
+      </label>
+    ` : ""}
     <label>Image path ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.image`, item.image)}</label>
     <div class="admin-edit-grid">
       <label>Single item price ${field(`settings.${key}.${adminState.ui.selectedBuilderItem}.price`, item.price, "number")}</label>
@@ -605,7 +635,7 @@ function bindAdmin() {
     if (event.target.id === "addSaleButton") adminState.settings.sales.push({ title: "Seasonal sale", copy: "Add seasonal promotion details here.", cta: "Shop now", active: true });
     if (event.target.id === "addSetButton") adminState.settings.sets.push({ id: `set-${Date.now()}`, title: "New Set", price: 0, stock: 0, image: "assets/products/uniform/heart-stars-charm-chain-necklace.jpg", description: "Set details.", active: true });
     if (event.target.id === "addBuilderBaseButton") {
-      adminState.settings.builderBases.push({ id: `base-${Date.now()}`, title: "New Base", price: 0, stock: 0, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" });
+      adminState.settings.builderBases.push({ id: `base-${Date.now()}`, type: "bracelet", title: "New Base", price: 0, stock: 0, image: "assets/products/uniform/gold-curb-chain-carabiner-necklace.jpg" });
       adminState.ui.builderType = "builderBases";
       adminState.ui.selectedBuilderItem = adminState.settings.builderBases.length - 1;
     }
