@@ -130,8 +130,10 @@ const state = {
   filter: "all",
   promo: "",
   delivery: "standard",
-  builder: { baseId: "", baseType: "bracelet", charms: [], swapIndex: null },
+  builder: { baseId: "", baseType: "bracelet", charms: [], positions: [], swapIndex: null },
 };
+
+const builderDrag = { index: null, pointerId: null, item: null, canvas: null };
 
 const initialFilter = new URLSearchParams(window.location.search).get("filter");
 if (initialFilter) state.filter = initialFilter;
@@ -488,6 +490,7 @@ function renderBuilderPage() {
   if (!baseGrid || !charmGrid) return;
   refreshSettings();
   state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
+  state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
   const typeLabels = {
     bracelet: "Bracelet",
     necklace: "Necklace",
@@ -546,6 +549,7 @@ function renderBuilderPreview() {
     <div class="creation-canvas designer-canvas ${escapeHtml(visualType)}">
       ${renderBuilderBaseImage(visualType, base)}
       <div class="creation-base-name">${base ? escapeHtml(base.title) : `Choose a ${typeLabel}`}</div>
+      <div class="creation-drag-hint">Drag charms to adjust placement</div>
       <div class="creation-charms" aria-label="Selected charms">
         ${renderBuilderCharmSlots(selectedCharms, visualType)}
       </div>
@@ -568,8 +572,10 @@ function renderBuilderCharmSlots(selectedCharms, type) {
   const anchors = builderAnchors(type, selectedCharms.length);
   return selectedCharms.map(({ item, index }) => {
     const anchor = anchors[index] || anchors[anchors.length - 1] || { x: 50, y: 52, rotate: 0 };
+    const custom = state.builder.positions?.[index];
+    const point = custom && Number.isFinite(custom.x) && Number.isFinite(custom.y) ? { ...anchor, ...custom } : anchor;
     return `
-      <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}" style="--x:${anchor.x}%; --y:${anchor.y}%; --r:${anchor.rotate || 0}deg;">
+      <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}" data-builder-drag-index="${index}" style="--x:${point.x}%; --y:${point.y}%; --r:${point.rotate || 0}deg;">
         <span class="charm-connector" aria-hidden="true"></span>
         <span class="charm-ring" aria-hidden="true"></span>
         <span class="charm-photo">
@@ -716,24 +722,30 @@ function bindGlobalEvents() {
     if (typeButton) {
       state.builder.baseType = typeButton.dataset.builderType;
       state.builder.baseId = "";
+      state.builder.positions = [];
       renderBuilderPage();
     }
 
     const baseButton = event.target.closest("[data-builder-base]");
     if (baseButton) {
       state.builder.baseId = baseButton.dataset.builderBase;
+      state.builder.positions = [];
       renderBuilderPage();
     }
 
     if (event.target.closest("[data-builder-clear]")) {
       state.builder.charms = [];
+      state.builder.positions = [];
       state.builder.swapIndex = null;
       renderBuilderPage();
     }
 
     const removeBuilderItem = event.target.closest("[data-builder-remove-index]");
     if (removeBuilderItem) {
-      state.builder.charms.splice(Number(removeBuilderItem.dataset.builderRemoveIndex), 1);
+      const index = Number(removeBuilderItem.dataset.builderRemoveIndex);
+      state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
+      state.builder.charms.splice(index, 1);
+      state.builder.positions.splice(index, 1);
       state.builder.swapIndex = null;
       renderBuilderPage();
     }
@@ -747,11 +759,13 @@ function bindGlobalEvents() {
     const charmButton = event.target.closest("[data-builder-charm]");
     if (charmButton) {
       state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
+      state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
       if (state.builder.swapIndex !== null && state.builder.charms[state.builder.swapIndex]) {
         state.builder.charms[state.builder.swapIndex] = charmButton.dataset.builderCharm;
         state.builder.swapIndex = null;
       } else {
         state.builder.charms.push(charmButton.dataset.builderCharm);
+        state.builder.positions.push(null);
       }
       renderBuilderPage();
     }
@@ -786,12 +800,57 @@ function bindGlobalEvents() {
     }
   });
 
+  document.addEventListener("pointerdown", (event) => {
+    const item = event.target.closest("[data-builder-drag-index]");
+    if (!item || event.target.closest("button")) return;
+    const canvas = item.closest(".creation-canvas");
+    if (!canvas) return;
+    builderDrag.index = Number(item.dataset.builderDragIndex);
+    builderDrag.pointerId = event.pointerId;
+    builderDrag.item = item;
+    builderDrag.canvas = canvas;
+    item.classList.add("dragging");
+    item.setPointerCapture?.(event.pointerId);
+    updateBuilderDragPosition(event);
+    event.preventDefault();
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (builderDrag.index === null || builderDrag.pointerId !== event.pointerId) return;
+    updateBuilderDragPosition(event);
+  });
+
+  document.addEventListener("pointerup", endBuilderDrag);
+  document.addEventListener("pointercancel", endBuilderDrag);
+
   document.addEventListener("input", (event) => {
     if (event.target.matches("[data-delivery-select]")) {
       state.delivery = event.target.value;
       renderCart();
     }
   });
+}
+
+function updateBuilderDragPosition(event) {
+  if (!builderDrag.canvas || !builderDrag.item) return;
+  const rect = builderDrag.canvas.getBoundingClientRect();
+  const x = Math.min(90, Math.max(10, ((event.clientX - rect.left) / rect.width) * 100));
+  const y = Math.min(88, Math.max(14, ((event.clientY - rect.top) / rect.height) * 100));
+  state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
+  const previous = state.builder.positions[builderDrag.index] || {};
+  state.builder.positions[builderDrag.index] = { ...previous, x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
+  builderDrag.item.style.setProperty("--x", `${x}%`);
+  builderDrag.item.style.setProperty("--y", `${y}%`);
+}
+
+function endBuilderDrag(event) {
+  if (builderDrag.index === null || builderDrag.pointerId !== event.pointerId) return;
+  builderDrag.item?.classList.remove("dragging");
+  builderDrag.item?.releasePointerCapture?.(event.pointerId);
+  builderDrag.index = null;
+  builderDrag.pointerId = null;
+  builderDrag.item = null;
+  builderDrag.canvas = null;
 }
 
 function playBuilderEffect(target) {
