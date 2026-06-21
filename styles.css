@@ -810,7 +810,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 
 .builder-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
   gap: 22px;
   align-items: start;
 }
@@ -852,23 +852,31 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .builder-choice-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin: 14px 0 28px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0 24px;
 }
 .builder-choice {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 12px;
+  padding: 8px;
   background: white;
   color: var(--ink);
   text-align: left;
 }
+.builder-choice strong {
+  font-size: 13px;
+  line-height: 1.25;
+}
+.builder-choice span {
+  font-size: 12px;
+  color: var(--muted);
+}
 .builder-choice.active { outline: 2px solid var(--brown); }
 .builder-choice button {
-  min-height: 38px;
+  min-height: 32px;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: #fff8f4;
@@ -877,7 +885,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .builder-choice img {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 1.08;
   object-fit: contain;
   background: var(--photo-bg);
 }
@@ -893,7 +901,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .creation-canvas {
   position: relative;
-  min-height: 360px;
+  min-height: 560px;
   overflow: hidden;
   border-radius: 8px;
   background:
@@ -903,9 +911,9 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   position: absolute;
   z-index: 2;
   left: 50%;
-  top: 46%;
+  top: 47%;
   width: 94%;
-  height: 82%;
+  height: 86%;
   object-fit: contain;
   transform: translate(-50%, -50%);
   filter: drop-shadow(0 20px 18px rgba(93, 67, 46, 0.16));
@@ -913,9 +921,9 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .builder-base-cutout.necklace,
 .builder-base-cutout.bag-chain {
-  top: 45%;
+  top: 46%;
   width: 98%;
-  height: 90%;
+  height: 94%;
 }
 .builder-base-cutout.key-chain {
   top: 43%;
@@ -962,8 +970,8 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   top: var(--y);
   display: inline-grid;
   justify-items: center;
-  width: 78px;
-  transform: translate(-50%, -2px) rotate(var(--r));
+  width: 70px;
+  transform: translate(-50%, -50%) rotate(var(--r));
   transform-origin: 50% 0;
   cursor: grab;
   touch-action: none;
@@ -980,24 +988,9 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 .creation-item.rotating {
   z-index: 9;
 }
-.charm-connector {
-  width: 2px;
-  height: 18px;
-  background: linear-gradient(#b88635, #dec27d);
-  box-shadow: 0 2px 4px rgba(96, 63, 40, 0.2);
-}
-.charm-ring {
-  width: 18px;
-  height: 18px;
-  margin-top: -2px;
-  border: 3px solid #bd9145;
-  border-radius: 50%;
-  background: rgba(255, 248, 224, 0.55);
-  box-shadow: 0 4px 8px rgba(96, 63, 40, 0.16);
-}
 .charm-photo {
-  width: 76px;
-  height: 84px;
+  width: 70px;
+  height: 78px;
   display: grid;
   place-items: center;
   margin-top: -1px;
@@ -1016,8 +1009,8 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .creation-item button {
   position: absolute;
-  top: 16px;
-  right: -2px;
+  top: -8px;
+  right: -8px;
   width: 22px;
   height: 22px;
   border: 1px solid var(--line);
@@ -1283,7 +1276,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   .admin-ops-grid { grid-template-columns: repeat(2, minmax(280px, 1fr)); }
   .admin-kpi-grid { grid-template-columns: repeat(3, 1fr); }
   .builder-layout { grid-template-columns: 1fr; }
-  .builder-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .builder-choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .builder, .builder-form { grid-template-columns: 1fr 1fr; }
 }
 
@@ -1315,6 +1308,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   .admin-split, .admin-data-tools { grid-template-columns: 1fr; }
   .filters { position: static; }
   .builder-form { grid-template-columns: 1fr; }
+  .creation-canvas { min-height: 500px; }
   footer { text-align: left; }
   .card-fields { grid-template-columns: 1fr; }
 }
@@ -1323,7 +1317,8 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   .header-actions { display: grid; grid-template-columns: 1fr auto auto; width: 100%; }
   .category-band, .product-grid, .service-strip, .ops-grid, .checkout-grid, .terms-grid { grid-template-columns: 1fr; }
   .brand img { width: 220px; }
-  .builder-choice-grid { grid-template-columns: 1fr; }
+  .builder-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .creation-canvas { min-height: 430px; }
   .hero-gallery {
     height: 330px;
     grid-template-columns: 1fr 1fr;

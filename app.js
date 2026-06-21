@@ -609,8 +609,6 @@ function renderBuilderCharmSlots(selectedCharms, type) {
     const point = custom && Number.isFinite(custom.x) && Number.isFinite(custom.y) ? { ...anchor, ...custom } : anchor;
     return `
       <span class="creation-item ${state.builder.swapIndex === index ? "swapping" : ""}" data-builder-drag-index="${index}" style="--x:${point.x}%; --y:${point.y}%; --r:${point.rotate || 0}deg;">
-        <span class="charm-connector" aria-hidden="true"></span>
-        <span class="charm-ring" aria-hidden="true"></span>
         <span class="charm-photo">
             <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
         </span>
