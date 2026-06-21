@@ -899,48 +899,28 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   background:
     radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.92), rgba(255, 250, 247, 0.88) 42%, rgba(248, 236, 228, 0.9) 100%);
 }
-.builder-chain-svg {
+.builder-base-cutout {
   position: absolute;
-  inset: 4% 3% 9%;
+  z-index: 2;
+  left: 50%;
+  top: 46%;
   width: 94%;
-  height: 87%;
-  overflow: visible;
+  height: 82%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 20px 18px rgba(93, 67, 46, 0.16));
+  pointer-events: none;
 }
-.chain-line,
-.chain-shadow,
-.chain-soft,
-.chain-link,
-.jump-ring,
-.clasp {
-  fill: none;
-  vector-effect: non-scaling-stroke;
+.builder-base-cutout.necklace,
+.builder-base-cutout.bag-chain {
+  top: 45%;
+  width: 98%;
+  height: 90%;
 }
-.chain-shadow {
-  stroke: rgba(98, 67, 42, 0.12);
-  stroke-width: 22;
-  filter: blur(1px);
-}
-.chain-line {
-  stroke: #c49b55;
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 8px 8px rgba(89, 61, 42, 0.16));
-}
-.chain-soft {
-  stroke: rgba(255, 246, 220, 0.92);
-  stroke-width: 8;
-}
-.chain-link {
-  stroke: #d2aa61;
-  stroke-width: 5;
-  fill: rgba(255, 249, 230, 0.24);
-}
-.jump-ring,
-.clasp {
-  stroke: #b88635;
-  stroke-width: 6;
-  filter: drop-shadow(0 7px 8px rgba(89, 61, 42, 0.18));
+.builder-base-cutout.key-chain {
+  top: 43%;
+  width: 68%;
+  height: 74%;
 }
 .creation-base-name {
   position: absolute;
@@ -963,7 +943,7 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 .creation-charms {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 4;
 }
 .creation-item {
   position: absolute;
@@ -971,13 +951,13 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   top: var(--y);
   display: inline-grid;
   justify-items: center;
-  width: 82px;
-  transform: translate(-50%, -7px) rotate(var(--r));
+  width: 78px;
+  transform: translate(-50%, -2px) rotate(var(--r));
   transform-origin: 50% 0;
 }
 .charm-connector {
   width: 2px;
-  height: 24px;
+  height: 18px;
   background: linear-gradient(#b88635, #dec27d);
   box-shadow: 0 2px 4px rgba(96, 63, 40, 0.2);
 }
@@ -991,8 +971,8 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   box-shadow: 0 4px 8px rgba(96, 63, 40, 0.16);
 }
 .charm-photo {
-  width: 78px;
-  height: 86px;
+  width: 76px;
+  height: 84px;
   display: grid;
   place-items: center;
   margin-top: -1px;
@@ -1011,8 +991,8 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
 }
 .creation-item button {
   position: absolute;
-  top: 22px;
-  right: 0;
+  top: 16px;
+  right: -2px;
   width: 22px;
   height: 22px;
   border: 1px solid var(--line);

@@ -544,7 +544,7 @@ function renderBuilderPreview() {
   const visualType = base?.type || state.builder.baseType || inferBaseType(base);
   preview.innerHTML = `
     <div class="creation-canvas designer-canvas ${escapeHtml(visualType)}">
-      ${renderBuilderBaseSvg(visualType, base)}
+      ${renderBuilderBaseImage(visualType, base)}
       <div class="creation-base-name">${base ? escapeHtml(base.title) : `Choose a ${typeLabel}`}</div>
       <div class="creation-charms" aria-label="Selected charms">
         ${renderBuilderCharmSlots(selectedCharms, visualType)}
@@ -589,25 +589,32 @@ function charmCutoutSrc(item) {
     .replace(/\.(jpe?g|png|webp)$/i, ".png");
 }
 
+function baseCutoutSrc(item) {
+  if (item?.cutoutImage) return item.cutoutImage;
+  return String(item?.image || "")
+    .replace("/uniform/", "/base-cutouts/")
+    .replace(/\.(jpe?g|png|webp)$/i, ".png");
+}
+
 function builderAnchors(type, count) {
   const maps = {
     bracelet: [
-      { x: 29, y: 48, rotate: -10 },
-      { x: 41, y: 54, rotate: -5 },
-      { x: 50, y: 56, rotate: 0 },
-      { x: 59, y: 54, rotate: 5 },
-      { x: 71, y: 48, rotate: 10 },
-      { x: 36, y: 42, rotate: -8 },
-      { x: 64, y: 42, rotate: 8 },
+      { x: 35, y: 59, rotate: -8 },
+      { x: 43, y: 64, rotate: -4 },
+      { x: 50, y: 66, rotate: 0 },
+      { x: 57, y: 64, rotate: 4 },
+      { x: 65, y: 59, rotate: 8 },
+      { x: 31, y: 53, rotate: -10 },
+      { x: 69, y: 53, rotate: 10 },
     ],
     necklace: [
-      { x: 50, y: 60, rotate: 0 },
-      { x: 42, y: 53, rotate: -8 },
-      { x: 58, y: 53, rotate: 8 },
-      { x: 35, y: 45, rotate: -14 },
-      { x: 65, y: 45, rotate: 14 },
-      { x: 47, y: 48, rotate: -5 },
-      { x: 53, y: 48, rotate: 5 },
+      { x: 50, y: 73, rotate: 0 },
+      { x: 45, y: 70, rotate: -7 },
+      { x: 55, y: 70, rotate: 7 },
+      { x: 40, y: 64, rotate: -12 },
+      { x: 60, y: 64, rotate: 12 },
+      { x: 47, y: 66, rotate: -5 },
+      { x: 53, y: 66, rotate: 5 },
     ],
     "key-chain": [
       { x: 50, y: 50, rotate: 0 },
@@ -616,60 +623,26 @@ function builderAnchors(type, count) {
       { x: 50, y: 67, rotate: 0 },
     ],
     "bag-chain": [
-      { x: 30, y: 47, rotate: -8 },
-      { x: 42, y: 50, rotate: -3 },
-      { x: 54, y: 50, rotate: 3 },
-      { x: 66, y: 47, rotate: 8 },
-      { x: 78, y: 43, rotate: 12 },
+      { x: 32, y: 60, rotate: -8 },
+      { x: 42, y: 65, rotate: -3 },
+      { x: 52, y: 66, rotate: 3 },
+      { x: 62, y: 63, rotate: 8 },
+      { x: 72, y: 57, rotate: 12 },
     ],
   };
   return (maps[type] || maps.bracelet).slice(0, Math.max(count, 1));
 }
 
-function renderBuilderBaseSvg(type, base) {
-  const title = escapeHtml(base?.title || "Ametopia base");
-  if (type === "necklace") {
-    return `
-      <svg class="builder-chain-svg necklace-chain" viewBox="0 0 360 320" role="img" aria-label="${title}">
-        <path class="chain-shadow" d="M68 42 C82 150 124 226 180 250 C236 226 278 150 292 42" />
-        <path class="chain-line" d="M68 42 C82 150 124 226 180 250 C236 226 278 150 292 42" />
-        ${chainLinks([[68,42,-20],[86,102,-12],[112,160,-8],[146,212,-4],[180,250,0],[214,212,4],[248,160,8],[274,102,12],[292,42,20]])}
-        <circle class="jump-ring" cx="180" cy="250" r="13" />
-      </svg>`;
-  }
-  if (type === "key-chain") {
-    return `
-      <svg class="builder-chain-svg key-chain-svg" viewBox="0 0 360 320" role="img" aria-label="${title}">
-        <circle class="chain-line" cx="180" cy="76" r="44" />
-        <circle class="chain-soft" cx="180" cy="76" r="28" />
-        <path class="chain-line" d="M180 120 L180 178" />
-        ${chainLinks([[180,130,90],[180,154,90],[180,178,90]])}
-        <circle class="jump-ring" cx="180" cy="178" r="14" />
-      </svg>`;
-  }
-  if (type === "bag-chain") {
-    return `
-      <svg class="builder-chain-svg bag-chain-svg" viewBox="0 0 360 320" role="img" aria-label="${title}">
-        <path class="chain-shadow" d="M46 134 C98 98 150 92 180 118 C210 92 262 98 314 134" />
-        <path class="chain-line" d="M46 134 C98 98 150 92 180 118 C210 92 262 98 314 134" />
-        ${chainLinks([[54,134,-25],[90,116,-18],[126,106,-10],[162,112,-4],[198,112,4],[234,106,10],[270,116,18],[306,134,25]])}
-        <path class="clasp" d="M28 130 C28 104 62 104 62 130 C62 156 28 156 28 130" />
-        <path class="clasp" d="M298 130 C298 104 332 104 332 130 C332 156 298 156 298 130" />
-      </svg>`;
-  }
+function renderBuilderBaseImage(type, base) {
+  if (!base) return "";
   return `
-    <svg class="builder-chain-svg bracelet-chain" viewBox="0 0 360 320" role="img" aria-label="${title}">
-      <ellipse class="chain-shadow" cx="180" cy="150" rx="130" ry="72" />
-      <ellipse class="chain-line" cx="180" cy="150" rx="130" ry="72" />
-      ${chainLinks([[54,150,0],[82,102,-32],[126,84,-16],[180,78,0],[234,84,16],[278,102,32],[306,150,0],[278,198,-32],[234,216,-16],[180,222,0],[126,216,16],[82,198,32]])}
-      <circle class="jump-ring" cx="180" cy="222" r="13" />
-    </svg>`;
-}
-
-function chainLinks(points) {
-  return points.map(([cx, cy, rotate]) => `
-    <ellipse class="chain-link" cx="${cx}" cy="${cy}" rx="18" ry="9" transform="rotate(${rotate} ${cx} ${cy})" />
-  `).join("");
+    <img
+      class="builder-base-cutout ${escapeHtml(type)}"
+      src="${baseCutoutSrc(base)}"
+      alt="${escapeHtml(base.title)}"
+      onerror="this.src='${base.image}'"
+    >
+  `;
 }
 
 function bindGlobalEvents() {
