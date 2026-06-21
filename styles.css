@@ -1033,6 +1033,18 @@ dialog::backdrop { background: rgba(31, 23, 34, 0.28); }
   border-radius: 999px;
   font-size: 11px;
 }
+.pose-controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+.creation-item .pose-controls button {
+  position: static;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 13px;
+}
 .builder-note {
   color: var(--brown);
   font-weight: 900;

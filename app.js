@@ -582,6 +582,10 @@ function renderBuilderCharmSlots(selectedCharms, type) {
             <img src="${charmCutoutSrc(item)}" alt="${escapeHtml(item.title)}">
         </span>
             <button type="button" data-builder-remove-index="${index}" aria-label="Remove ${escapeHtml(item.title)}">\u2212</button>
+            <span class="pose-controls" aria-label="Adjust ${escapeHtml(item.title)} pose">
+              <button type="button" data-builder-rotate-index="${index}" data-builder-rotate="-15" aria-label="Rotate ${escapeHtml(item.title)} left">\u21ba</button>
+              <button type="button" data-builder-rotate-index="${index}" data-builder-rotate="15" aria-label="Rotate ${escapeHtml(item.title)} right">\u21bb</button>
+            </span>
             <button type="button" class="swap-button" data-builder-swap-index="${index}">Swap</button>
       </span>
     `;
@@ -756,6 +760,12 @@ function bindGlobalEvents() {
       renderBuilderPage();
     }
 
+    const rotateBuilderItem = event.target.closest("[data-builder-rotate-index]");
+    if (rotateBuilderItem) {
+      rotateBuilderCharm(Number(rotateBuilderItem.dataset.builderRotateIndex), Number(rotateBuilderItem.dataset.builderRotate));
+      renderBuilderPage();
+    }
+
     const charmButton = event.target.closest("[data-builder-charm]");
     if (charmButton) {
       state.builder.charms = Array.isArray(state.builder.charms) ? state.builder.charms : [];
@@ -841,6 +851,16 @@ function updateBuilderDragPosition(event) {
   state.builder.positions[builderDrag.index] = { ...previous, x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
   builderDrag.item.style.setProperty("--x", `${x}%`);
   builderDrag.item.style.setProperty("--y", `${y}%`);
+}
+
+function rotateBuilderCharm(index, delta) {
+  state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
+  const anchors = builderAnchors(state.builder.baseType || "bracelet", (state.builder.charms || []).length);
+  const anchor = anchors[index] || { rotate: 0 };
+  const previous = state.builder.positions[index] || {};
+  const current = Number.isFinite(previous.rotate) ? previous.rotate : Number(anchor.rotate || 0);
+  const next = Math.max(-75, Math.min(75, current + delta));
+  state.builder.positions[index] = { ...previous, rotate: next };
 }
 
 function endBuilderDrag(event) {
