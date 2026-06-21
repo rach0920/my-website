@@ -921,7 +921,7 @@ function updateBuilderRotatePosition(event) {
   if (!builderRotateDrag.item) return;
   const distance = event.clientX - builderRotateDrag.startX;
   if (Math.abs(distance) > 2) builderRotateDrag.moved = true;
-  const next = Math.max(-85, Math.min(85, builderRotateDrag.startRotate + distance * 0.55));
+  const next = Math.max(-85, Math.min(85, builderRotateDrag.startRotate - distance * 0.55));
   state.builder.positions = Array.isArray(state.builder.positions) ? state.builder.positions : [];
   const previous = state.builder.positions[builderRotateDrag.index] || {};
   state.builder.positions[builderRotateDrag.index] = { ...previous, rotate: Number(next.toFixed(1)) };
