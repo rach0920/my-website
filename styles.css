@@ -158,11 +158,7 @@ img { max-width: 100%; display: block; }
   gap: clamp(24px, 4vw, 44px);
   align-items: center;
   padding: clamp(34px, 5vw, 58px) clamp(16px, 5vw, 72px) clamp(28px, 4vw, 46px);
-  background:
-    radial-gradient(circle at 78% 20%, rgba(255, 93, 169, 0.28), transparent 19rem),
-    radial-gradient(circle at 86% 70%, rgba(81, 220, 178, 0.18), transparent 20rem),
-    radial-gradient(circle at 12% 22%, rgba(255, 226, 154, 0.18), transparent 16rem),
-    linear-gradient(135deg, #161017 0%, #231924 44%, #100d13 100%);
+  background: url("assets/hero-pink-clouds.png") center / cover no-repeat;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -173,11 +169,9 @@ img { max-width: 100%; display: block; }
   inset: 0;
   z-index: 0;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: radial-gradient(circle at 70% 50%, black 0%, transparent 72%);
-  opacity: 0.9;
+    linear-gradient(90deg, rgba(255, 250, 249, 0.84), rgba(255, 246, 251, 0.48) 46%, rgba(255, 246, 251, 0.12) 100%),
+    radial-gradient(circle at 72% 48%, rgba(255, 255, 255, 0.06), rgba(255, 222, 235, 0.18) 58%, rgba(104, 58, 85, 0.16) 100%);
+  opacity: 1;
 }
 .hero::after {
   content: "";
@@ -185,8 +179,8 @@ img { max-width: 100%; display: block; }
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(circle at 72% 50%, transparent 0%, rgba(10, 7, 11, 0.14) 44%, rgba(10, 7, 11, 0.34) 100%),
-    linear-gradient(90deg, rgba(10, 7, 11, 0.14), transparent 54%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 38%, rgba(255, 236, 244, 0.2)),
+    radial-gradient(circle at 74% 50%, transparent 0%, rgba(255, 255, 255, 0.1) 42%, rgba(255, 216, 232, 0.24) 100%);
   pointer-events: none;
 }
 .hero-copy {
@@ -207,13 +201,13 @@ img { max-width: 100%; display: block; }
 .rainbow-word span:nth-child(6) { color: #09a5bd; }
 .rainbow-word span:nth-child(7) { color: #2875ba; }
 .rainbow-word span:nth-child(8) { color: #8d4b9e; }
-.hero p { max-width: 600px; font-size: clamp(18px, 2vw, 24px); color: rgba(255, 247, 252, 0.9); }
+.hero p { max-width: 600px; font-size: clamp(18px, 2vw, 24px); color: #4f3446; }
 .hero-subcopy {
   margin-top: 8px;
   font-size: clamp(16px, 1.5vw, 19px) !important;
-  color: rgba(255, 235, 244, 0.76) !important;
+  color: #6f5a66 !important;
 }
-.hero .kicker { color: #ffd7ea; }
+.hero .kicker { color: #5b344e; }
 .kicker {
   margin: 0 0 8px;
   color: #7c5946;
@@ -241,14 +235,14 @@ img { max-width: 100%; display: block; }
   color: var(--brown);
 }
 .hero .primary-link {
-  background: #fff4fa;
+  background: #ffffff;
   color: #2b1724;
-  box-shadow: 0 16px 32px rgba(255, 114, 178, 0.2);
+  box-shadow: 0 16px 32px rgba(155, 94, 126, 0.18);
 }
 .hero .secondary-link {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.24);
-  color: #fff7fb;
+  background: rgba(255, 255, 255, 0.56);
+  border-color: rgba(104, 67, 83, 0.18);
+  color: #5b344e;
   backdrop-filter: blur(10px);
 }
 .charm-board {
