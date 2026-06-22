@@ -341,24 +341,25 @@ img { max-width: 100%; display: block; }
   border-radius: 999px;
 }
 .board-charm {
-  object-fit: contain;
+  position: relative;
+  display: block;
   padding: clamp(3px, 0.65vw, 7px);
   background:
     radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.16), transparent 54%),
     rgba(255, 255, 255, 0.02);
   filter: drop-shadow(0 11px 10px rgba(0, 0, 0, 0.28));
-  animation: charm-flip 4.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  backface-visibility: hidden;
-  transform: perspective(700px) rotateY(0deg) translateY(-1px);
+  perspective: 700px;
+  transform: translateY(-1px);
   transform-style: preserve-3d;
-  will-change: transform, filter;
+  --flip-duration: 9.4s;
+  --flip-delay: 0s;
 }
-.board-grid > :nth-child(4n) { animation-delay: -0.6s; }
-.board-grid > :nth-child(5n) { animation-delay: -1.25s; }
-.board-grid > :nth-child(7n) { animation-delay: -2.05s; }
-.board-grid > :nth-child(9n) { animation-delay: -2.8s; }
-.board-charm:nth-of-type(3n) { animation-duration: 5.2s; }
-.board-charm:nth-of-type(4n) { animation-duration: 4.1s; }
+.board-grid > :nth-child(4n) { --flip-delay: -0.8s; }
+.board-grid > :nth-child(5n) { --flip-delay: -1.7s; }
+.board-grid > :nth-child(7n) { --flip-delay: -2.8s; }
+.board-grid > :nth-child(9n) { --flip-delay: -3.9s; }
+.board-charm:nth-of-type(3n) { --flip-duration: 10.8s; }
+.board-charm:nth-of-type(4n) { --flip-duration: 8.6s; }
 .board-charm.brand-letter {
   padding: clamp(1px, 0.45vw, 5px);
   background:
@@ -368,24 +369,74 @@ img { max-width: 100%; display: block; }
     drop-shadow(0 0 12px rgba(255, 221, 151, 0.2))
     drop-shadow(0 12px 10px rgba(0, 0, 0, 0.3));
 }
-@keyframes charm-flip {
-  0%, 72%, 100% {
-    filter: drop-shadow(0 11px 10px rgba(0, 0, 0, 0.28));
-    transform: perspective(700px) rotateY(0deg) translateY(-1px) scale(1);
+.board-card-face {
+  position: absolute;
+  inset: clamp(3px, 0.65vw, 7px);
+  width: calc(100% - clamp(6px, 1.3vw, 14px));
+  height: calc(100% - clamp(6px, 1.3vw, 14px));
+  object-fit: contain;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+}
+.board-card-front {
+  animation: charm-front-flip var(--flip-duration) cubic-bezier(0.4, 0, 0.2, 1) var(--flip-delay) infinite;
+}
+.board-card-back {
+  padding: 5%;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.98), rgba(255, 239, 247, 0.94) 72%),
+    #fff4fa;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  transform: rotateY(180deg);
+  animation: charm-back-flip var(--flip-duration) cubic-bezier(0.4, 0, 0.2, 1) var(--flip-delay) infinite;
+}
+@keyframes charm-front-flip {
+  0%, 58%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+    transform: rotateY(0deg) translateY(0) scale(1);
   }
-  82% {
-    filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.34)) brightness(1.08);
-    transform: perspective(700px) rotateY(92deg) translateY(-4px) scale(1.04);
+  68% {
+    opacity: 1;
+    filter: brightness(1.08);
+    transform: rotateY(92deg) translateY(-4px) scale(1.04);
+  }
+  76%, 84% {
+    opacity: 0;
+    transform: rotateY(180deg) translateY(-4px) scale(1.04);
   }
   92% {
-    filter: drop-shadow(0 13px 12px rgba(0, 0, 0, 0.3)) brightness(1.04);
-    transform: perspective(700px) rotateY(360deg) translateY(-1px) scale(1.01);
+    opacity: 1;
+    filter: brightness(1.04);
+    transform: rotateY(360deg) translateY(0) scale(1.01);
+  }
+}
+@keyframes charm-back-flip {
+  0%, 58%, 100% {
+    opacity: 0;
+    transform: rotateY(180deg) translateY(0) scale(1);
+  }
+  68% {
+    opacity: 0;
+    transform: rotateY(88deg) translateY(-4px) scale(1.04);
+  }
+  76%, 84% {
+    opacity: 1;
+    transform: rotateY(0deg) translateY(-4px) scale(1.04);
+  }
+  92% {
+    opacity: 0;
+    transform: rotateY(-180deg) translateY(0) scale(1.01);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .board-charm {
+  .board-card-front,
+  .board-card-back {
     animation: none;
   }
+  .board-card-back { opacity: 0; }
 }
 .hero-gallery {
   position: relative;

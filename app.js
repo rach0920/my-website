@@ -231,6 +231,33 @@ function refreshSettings() {
   state.settings = readStoreSettings();
 }
 
+function initCharmBoardFlips() {
+  document.querySelectorAll("img.board-charm").forEach((image) => {
+    const card = document.createElement("span");
+    card.className = image.className;
+    if (image.alt) {
+      card.setAttribute("role", "img");
+      card.setAttribute("aria-label", image.alt);
+    } else {
+      card.setAttribute("aria-hidden", "true");
+    }
+
+    const front = image.cloneNode(true);
+    front.className = "board-card-face board-card-front";
+    front.removeAttribute("alt");
+    front.setAttribute("aria-hidden", "true");
+
+    const back = document.createElement("img");
+    back.className = "board-card-face board-card-back";
+    back.src = "assets/charm-card-back-dog.png";
+    back.alt = "";
+    back.setAttribute("aria-hidden", "true");
+
+    card.append(front, back);
+    image.replaceWith(card);
+  });
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -1080,6 +1107,7 @@ function renderAll() {
 
 bindGlobalEvents();
 bindPageForms();
+initCharmBoardFlips();
 renderAll();
 
 if (document.querySelector("#heroMainImage")) {
