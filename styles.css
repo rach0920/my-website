@@ -252,14 +252,16 @@ img { max-width: 100%; display: block; }
   height: clamp(520px, 52vw, 680px);
   margin-inline: auto;
   padding: clamp(12px, 2vw, 18px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 28px;
   background:
-    radial-gradient(circle at 50% 20%, rgba(255, 111, 189, 0.16), transparent 24rem),
-    linear-gradient(145deg, rgba(41, 34, 43, 0.94), rgba(17, 14, 20, 0.98));
+    radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.78), transparent 13rem),
+    radial-gradient(circle at 76% 72%, rgba(255, 205, 229, 0.58), transparent 15rem),
+    linear-gradient(145deg, rgba(255, 248, 250, 0.9), rgba(250, 225, 235, 0.82));
   box-shadow:
-    0 36px 80px rgba(0, 0, 0, 0.36),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    0 34px 80px rgba(142, 85, 112, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px) saturate(1.08);
   overflow: hidden;
 }
 .charm-board::before,
@@ -272,8 +274,8 @@ img { max-width: 100%; display: block; }
   inset: 16px;
   border-radius: 20px;
   background:
-    radial-gradient(circle at 18% 24%, rgba(255, 105, 180, 0.22), transparent 18%),
-    radial-gradient(circle at 82% 72%, rgba(76, 221, 181, 0.16), transparent 20%);
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.48), transparent 20%),
+    radial-gradient(circle at 82% 72%, rgba(255, 190, 220, 0.24), transparent 24%);
   filter: blur(12px);
 }
 .charm-board::after {
@@ -281,8 +283,8 @@ img { max-width: 100%; display: block; }
   border-radius: inherit;
   z-index: 3;
   background:
-    linear-gradient(180deg, rgba(18, 14, 21, 0.98) 0%, transparent 12%, transparent 88%, rgba(18, 14, 21, 0.98) 100%),
-    linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 22%, transparent 78%, rgba(255, 255, 255, 0.08));
+    linear-gradient(180deg, rgba(255, 248, 250, 0.92) 0%, transparent 12%, transparent 88%, rgba(255, 238, 245, 0.9) 100%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.32), transparent 22%, transparent 78%, rgba(255, 210, 232, 0.22));
 }
 .board-track {
   position: relative;
@@ -306,12 +308,12 @@ img { max-width: 100%; display: block; }
 .board-key {
   display: block;
   background:
-    linear-gradient(145deg, rgba(98, 90, 101, 0.94), rgba(46, 40, 50, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(218, 192, 207, 0.94));
+  border: 1px solid rgba(128, 82, 105, 0.2);
   box-shadow:
-    inset 0 3px 5px rgba(255, 255, 255, 0.14),
-    inset 0 -8px 12px rgba(0, 0, 0, 0.22),
-    0 9px 14px rgba(0, 0, 0, 0.28);
+    inset 0 3px 6px rgba(255, 255, 255, 0.78),
+    inset 0 -9px 16px rgba(128, 82, 105, 0.16),
+    0 10px 18px rgba(126, 82, 104, 0.2);
 }
 .board-key::after {
   content: "+";
@@ -319,7 +321,7 @@ img { max-width: 100%; display: block; }
   place-items: center;
   width: 100%;
   height: 100%;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(100, 65, 83, 0.3);
   font-size: clamp(18px, 2vw, 25px);
   font-weight: 300;
 }
@@ -339,9 +341,9 @@ img { max-width: 100%; display: block; }
   display: block;
   padding: clamp(3px, 0.65vw, 7px);
   background:
-    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.16), transparent 54%),
-    rgba(255, 255, 255, 0.02);
-  filter: drop-shadow(0 11px 10px rgba(0, 0, 0, 0.28));
+    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.56), transparent 54%),
+    rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 11px 12px rgba(112, 74, 92, 0.22));
   perspective: 700px;
   transform: translateY(-1px);
   transform-style: preserve-3d;
@@ -360,8 +362,8 @@ img { max-width: 100%; display: block; }
     radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.24), transparent 58%),
     rgba(255, 255, 255, 0.04);
   filter:
-    drop-shadow(0 0 12px rgba(255, 221, 151, 0.2))
-    drop-shadow(0 12px 10px rgba(0, 0, 0, 0.3));
+    drop-shadow(0 0 12px rgba(255, 221, 151, 0.24))
+    drop-shadow(0 12px 12px rgba(112, 74, 92, 0.22));
 }
 .board-card-face {
   position: absolute;
