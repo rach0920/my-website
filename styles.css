@@ -306,24 +306,73 @@ img { max-width: 100%; display: block; }
   border-radius: 12px;
 }
 .board-key {
+  --shape-a: #ef4d78;
+  --shape-b: #f36f2d;
+  --shape-glow: rgba(239, 77, 120, 0.24);
+  position: relative;
   display: block;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(218, 192, 207, 0.94));
-  border: 1px solid rgba(128, 82, 105, 0.2);
+    radial-gradient(circle at 26% 20%, rgba(255, 255, 255, 0.92), transparent 22%),
+    radial-gradient(circle at 72% 76%, rgba(255, 255, 255, 0.28), transparent 28%),
+    linear-gradient(145deg, color-mix(in srgb, var(--shape-a) 82%, white 18%), var(--shape-b));
+  border: 1px solid rgba(255, 255, 255, 0.48);
   box-shadow:
-    inset 0 3px 6px rgba(255, 255, 255, 0.78),
-    inset 0 -9px 16px rgba(128, 82, 105, 0.16),
-    0 10px 18px rgba(126, 82, 104, 0.2);
+    inset 0 5px 8px rgba(255, 255, 255, 0.46),
+    inset 0 -12px 18px rgba(78, 38, 62, 0.16),
+    0 12px 20px var(--shape-glow),
+    0 5px 10px rgba(126, 82, 104, 0.12);
+  transform: translateY(0) rotate(var(--shape-tilt, 0deg));
+  overflow: hidden;
 }
 .board-key::after {
-  content: "+";
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  color: rgba(100, 65, 83, 0.3);
-  font-size: clamp(18px, 2vw, 25px);
-  font-weight: 300;
+  content: "";
+  position: absolute;
+  inset: 10% 14% auto 14%;
+  height: 34%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.08));
+  filter: blur(0.2px);
+  opacity: 0.72;
+}
+.board-grid > .board-key:nth-child(7n + 1) {
+  --shape-a: #ef4d78;
+  --shape-b: #ff8aa8;
+  --shape-glow: rgba(239, 77, 120, 0.24);
+  --shape-tilt: -2deg;
+}
+.board-grid > .board-key:nth-child(7n + 2) {
+  --shape-a: #f36f2d;
+  --shape-b: #ffc36a;
+  --shape-glow: rgba(243, 111, 45, 0.22);
+  --shape-tilt: 2deg;
+}
+.board-grid > .board-key:nth-child(7n + 3) {
+  --shape-a: #e9b51d;
+  --shape-b: #fff071;
+  --shape-glow: rgba(233, 181, 29, 0.22);
+}
+.board-grid > .board-key:nth-child(7n + 4) {
+  --shape-a: #49a45e;
+  --shape-b: #a6df89;
+  --shape-glow: rgba(73, 164, 94, 0.2);
+  --shape-tilt: -1.5deg;
+}
+.board-grid > .board-key:nth-child(7n + 5) {
+  --shape-a: #09a5bd;
+  --shape-b: #7ee4ee;
+  --shape-glow: rgba(9, 165, 189, 0.2);
+  --shape-tilt: 1.5deg;
+}
+.board-grid > .board-key:nth-child(7n + 6) {
+  --shape-a: #2875ba;
+  --shape-b: #8ec6ff;
+  --shape-glow: rgba(40, 117, 186, 0.2);
+}
+.board-grid > .board-key:nth-child(7n) {
+  --shape-a: #8d4b9e;
+  --shape-b: #d7a0e9;
+  --shape-glow: rgba(141, 75, 158, 0.2);
+  --shape-tilt: 2.5deg;
 }
 .board-key.pill {
   aspect-ratio: 1.8 / 1;
