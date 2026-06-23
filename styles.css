@@ -45,45 +45,65 @@ body::after {
   top: -12vh;
   bottom: -12vh;
   z-index: 0;
-  width: min(24vw, 250px);
+  width: min(28vw, 300px);
   pointer-events: none;
-  opacity: 0.58;
-  filter: blur(0.2px);
+  opacity: 0.82;
+  filter:
+    drop-shadow(0 18px 28px rgba(178, 121, 170, 0.18))
+    drop-shadow(0 0 24px rgba(255, 255, 255, 0.48));
   background-repeat: repeat-y;
-  background-size: 100% 760px;
-  animation: bubble-rise 28s linear infinite;
+  background-size: 100% 880px;
+  animation: bubble-rise 32s linear infinite;
 }
 body > :not(script) {
   position: relative;
   z-index: 1;
 }
 body::before {
-  left: max(-84px, -7vw);
+  left: max(-104px, -8vw);
   background-image:
-    radial-gradient(circle at 72% 9%, rgba(255, 255, 255, 0.72) 0 28px, rgba(248, 204, 221, 0.28) 31px, rgba(255, 255, 255, 0) 49px),
-    radial-gradient(circle at 42% 24%, rgba(255, 255, 255, 0.64) 0 46px, rgba(212, 196, 234, 0.24) 50px, rgba(255, 255, 255, 0) 78px),
-    radial-gradient(circle at 82% 47%, rgba(255, 255, 255, 0.52) 0 64px, rgba(246, 218, 201, 0.22) 69px, rgba(255, 255, 255, 0) 102px),
-    radial-gradient(circle at 38% 70%, rgba(255, 255, 255, 0.58) 0 34px, rgba(201, 231, 238, 0.2) 38px, rgba(255, 255, 255, 0) 62px);
+    radial-gradient(circle at 68% 8%, rgba(255, 255, 255, 0.96) 0 8px, rgba(255, 255, 255, 0) 16px),
+    radial-gradient(circle at 75% 12%, rgba(255, 255, 255, 0.5) 0 22px, rgba(244, 174, 210, 0.28) 34px, rgba(175, 205, 255, 0.2) 43px, rgba(255, 255, 255, 0) 58px),
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.98) 0 11px, rgba(255, 255, 255, 0) 22px),
+    radial-gradient(circle at 43% 27%, rgba(255, 255, 255, 0.42) 0 42px, rgba(228, 178, 238, 0.28) 58px, rgba(158, 226, 236, 0.18) 73px, rgba(255, 255, 255, 0) 92px),
+    radial-gradient(circle at 84% 48%, rgba(255, 255, 255, 0.96) 0 14px, rgba(255, 255, 255, 0) 27px),
+    radial-gradient(circle at 78% 50%, rgba(255, 255, 255, 0.34) 0 62px, rgba(255, 186, 215, 0.26) 79px, rgba(181, 211, 255, 0.16) 100px, rgba(255, 255, 255, 0) 124px),
+    radial-gradient(circle at 35% 73%, rgba(255, 255, 255, 0.98) 0 9px, rgba(255, 255, 255, 0) 19px),
+    radial-gradient(circle at 42% 75%, rgba(255, 255, 255, 0.48) 0 35px, rgba(188, 232, 238, 0.26) 49px, rgba(247, 193, 220, 0.18) 63px, rgba(255, 255, 255, 0) 80px);
 }
 body::after {
-  right: max(-90px, -7vw);
-  animation-duration: 34s;
+  right: max(-110px, -8vw);
+  animation-duration: 38s;
   animation-direction: reverse;
   background-image:
-    radial-gradient(circle at 28% 13%, rgba(255, 255, 255, 0.66) 0 38px, rgba(250, 211, 226, 0.26) 42px, rgba(255, 255, 255, 0) 68px),
-    radial-gradient(circle at 68% 34%, rgba(255, 255, 255, 0.54) 0 68px, rgba(224, 204, 238, 0.2) 74px, rgba(255, 255, 255, 0) 112px),
-    radial-gradient(circle at 22% 58%, rgba(255, 255, 255, 0.7) 0 30px, rgba(255, 229, 205, 0.24) 34px, rgba(255, 255, 255, 0) 56px),
-    radial-gradient(circle at 62% 82%, rgba(255, 255, 255, 0.56) 0 50px, rgba(202, 231, 238, 0.18) 55px, rgba(255, 255, 255, 0) 86px);
+    radial-gradient(circle at 28% 12%, rgba(255, 255, 255, 0.98) 0 10px, rgba(255, 255, 255, 0) 21px),
+    radial-gradient(circle at 30% 15%, rgba(255, 255, 255, 0.44) 0 38px, rgba(251, 184, 218, 0.28) 54px, rgba(178, 221, 255, 0.2) 69px, rgba(255, 255, 255, 0) 88px),
+    radial-gradient(circle at 69% 34%, rgba(255, 255, 255, 0.96) 0 15px, rgba(255, 255, 255, 0) 30px),
+    radial-gradient(circle at 66% 38%, rgba(255, 255, 255, 0.34) 0 70px, rgba(221, 176, 239, 0.25) 88px, rgba(255, 207, 174, 0.18) 112px, rgba(255, 255, 255, 0) 138px),
+    radial-gradient(circle at 23% 59%, rgba(255, 255, 255, 0.98) 0 8px, rgba(255, 255, 255, 0) 18px),
+    radial-gradient(circle at 24% 62%, rgba(255, 255, 255, 0.5) 0 30px, rgba(255, 220, 183, 0.28) 42px, rgba(190, 232, 238, 0.16) 57px, rgba(255, 255, 255, 0) 73px),
+    radial-gradient(circle at 62% 83%, rgba(255, 255, 255, 0.98) 0 12px, rgba(255, 255, 255, 0) 24px),
+    radial-gradient(circle at 60% 82%, rgba(255, 255, 255, 0.4) 0 52px, rgba(194, 224, 255, 0.23) 69px, rgba(250, 184, 216, 0.2) 88px, rgba(255, 255, 255, 0) 108px);
 }
 @keyframes bubble-rise {
   from { background-position: 0 0; }
-  to { background-position: 0 -760px; }
+  to { background-position: 0 -880px; }
 }
 @media (prefers-reduced-motion: reduce) {
   body::before,
   body::after {
     animation: none;
   }
+}
+@media (max-width: 760px) {
+  body::before,
+  body::after {
+    width: 150px;
+    opacity: 0.72;
+    background-size: 100% 720px;
+  }
+  body::before { left: -92px; }
+  body::after { right: -96px; }
 }
 h1, h2, h3, h4, h5, h6, button, input, select { font-family: inherit; }
 button, input, select, textarea { font: inherit; }
