@@ -27,6 +27,8 @@ html {
 body {
   margin: 0;
   overflow-x: clip;
+  position: relative;
+  isolation: isolate;
   background:
     radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.95), transparent 22rem),
     radial-gradient(circle at 78% 4%, rgba(221, 211, 232, 0.7), transparent 28rem),
@@ -35,6 +37,53 @@ body {
   color: var(--ink);
   font-family: Nunito, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   letter-spacing: 0;
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: -12vh;
+  bottom: -12vh;
+  z-index: 0;
+  width: min(24vw, 250px);
+  pointer-events: none;
+  opacity: 0.58;
+  filter: blur(0.2px);
+  background-repeat: repeat-y;
+  background-size: 100% 760px;
+  animation: bubble-rise 28s linear infinite;
+}
+body > :not(script) {
+  position: relative;
+  z-index: 1;
+}
+body::before {
+  left: max(-84px, -7vw);
+  background-image:
+    radial-gradient(circle at 72% 9%, rgba(255, 255, 255, 0.72) 0 28px, rgba(248, 204, 221, 0.28) 31px, rgba(255, 255, 255, 0) 49px),
+    radial-gradient(circle at 42% 24%, rgba(255, 255, 255, 0.64) 0 46px, rgba(212, 196, 234, 0.24) 50px, rgba(255, 255, 255, 0) 78px),
+    radial-gradient(circle at 82% 47%, rgba(255, 255, 255, 0.52) 0 64px, rgba(246, 218, 201, 0.22) 69px, rgba(255, 255, 255, 0) 102px),
+    radial-gradient(circle at 38% 70%, rgba(255, 255, 255, 0.58) 0 34px, rgba(201, 231, 238, 0.2) 38px, rgba(255, 255, 255, 0) 62px);
+}
+body::after {
+  right: max(-90px, -7vw);
+  animation-duration: 34s;
+  animation-direction: reverse;
+  background-image:
+    radial-gradient(circle at 28% 13%, rgba(255, 255, 255, 0.66) 0 38px, rgba(250, 211, 226, 0.26) 42px, rgba(255, 255, 255, 0) 68px),
+    radial-gradient(circle at 68% 34%, rgba(255, 255, 255, 0.54) 0 68px, rgba(224, 204, 238, 0.2) 74px, rgba(255, 255, 255, 0) 112px),
+    radial-gradient(circle at 22% 58%, rgba(255, 255, 255, 0.7) 0 30px, rgba(255, 229, 205, 0.24) 34px, rgba(255, 255, 255, 0) 56px),
+    radial-gradient(circle at 62% 82%, rgba(255, 255, 255, 0.56) 0 50px, rgba(202, 231, 238, 0.18) 55px, rgba(255, 255, 255, 0) 86px);
+}
+@keyframes bubble-rise {
+  from { background-position: 0 0; }
+  to { background-position: 0 -760px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }
 h1, h2, h3, h4, h5, h6, button, input, select { font-family: inherit; }
 button, input, select, textarea { font: inherit; }
