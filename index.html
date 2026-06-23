@@ -19,7 +19,7 @@
 
     <header class="site-header">
       <a class="brand" href="#home" aria-label="Ametopia home">
-        <img src="assets/ametopia-logo.png" alt="Ametopia">
+        <img src="assets/ametopia-logo-cropped.png" alt="Ametopia">
       </a>
       <nav class="nav" aria-label="Main navigation">
         <button data-filter="all">Shop All</button>
@@ -58,8 +58,8 @@
           <p>Charm your world, one piece at a time.</p>
           <p class="hero-subcopy">Create your own look - charms for bags, bracelets, shoes & necklaces.</p>
           <div class="hero-actions">
-          <a class="primary-link" href="#shop">Shop charms</a>
-          <a class="secondary-link" href="builder.html">Build a charm piece</a>
+          <a class="primary-link" href="builder.html">Design your charm piece</a>
+          <a class="secondary-link" href="#shop">Shop ready charms</a>
           </div>
         </div>
         <div class="charm-board" aria-label="Ametopia charm board">
@@ -142,7 +142,7 @@
           <div>
             <p class="kicker">Ready-to-style</p>
             <h2 id="setsTitle">Sets</h2>
-            <p class="section-copy" id="setsCopy">Ready-to-style combinations. More sets can be uploaded by admin later.</p>
+            <p class="section-copy" id="setsCopy">Ready-to-style combinations curated for effortless gifting and everyday charm styling.</p>
           </div>
         </div>
         <div class="product-grid" id="setsGrid"></div>
@@ -183,15 +183,15 @@
         <div>
           <p class="kicker">Charm builder</p>
           <h2>Create your own product</h2>
-          <p>Choose a base, add charms with quantities, preview the final creation, then proceed when it feels right.</p>
+          <p>Choose a base, add your charms, preview the finished piece, then add your design to your bag.</p>
         </div>
-        <a class="primary-link builder-effect-link" href="builder.html" data-builder-effect>Charm Builder</a>
+        <a class="primary-link builder-effect-link" href="builder.html" data-builder-effect>Open Design Lab</a>
       </section>
 
     </main>
 
     <footer>
-      <img src="assets/ametopia-logo.png" alt="Ametopia">
+      <img src="assets/ametopia-logo-cropped.png" alt="Ametopia">
       <div>
         <strong>Ametopia</strong>
         <p>Shop unique DIY charms for bags, bracelets, shoes & necklaces.</p>
@@ -201,7 +201,6 @@
       <a href="contact.html">Contact Us</a>
       <a href="sitemap.html">Site Map</a>
       <a href="terms.html">Terms</a>
-      <a href="admin.html">Admin</a>
     </footer>
 
     <dialog id="productDialog"></dialog>
@@ -212,6 +211,7 @@
       </div>
       <div id="cartItems"></div>
       <div class="cart-summary">
+        <div class="free-shipping-progress" id="freeShippingProgress"></div>
         <label>Promo code
           <input id="promoInput" placeholder="AME10">
         </label>

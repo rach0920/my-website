@@ -84,7 +84,7 @@ function defaultSettings() {
     pageSections: [
       { id: "newArrivals", title: "New Arrivals", copy: "Fresh charms and chains for the newest Ametopia looks.", active: true },
       { id: "sales", title: "Sales", copy: "Limited-time promotions and seasonal offers.", active: true },
-      { id: "sets", title: "Sets", copy: "Ready-to-style combinations. More sets can be uploaded by admin later.", active: true },
+      { id: "sets", title: "Sets", copy: "Ready-to-style combinations curated for effortless gifting and everyday charm styling.", active: true },
     ],
     sets: [
       {
@@ -93,7 +93,7 @@ function defaultSettings() {
         price: 68,
         stock: 0,
         image: "assets/products/uniform/heart-stars-charm-chain-necklace.jpg",
-        description: "Coming soon. Admin can update photos, price, stock and copy when set products arrive.",
+        description: "A polished starter edit for effortless charm styling. Join the next drop when sets are released.",
         active: true,
       },
     ],

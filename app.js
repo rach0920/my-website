@@ -50,7 +50,7 @@ function defaultStoreSettings() {
     pageSections: [
       { id: "newArrivals", title: "New Arrivals", copy: "Fresh charms and chains for the newest Ametopia looks.", active: true },
       { id: "sales", title: "Sales", copy: "Limited-time promotions and seasonal offers.", active: true },
-      { id: "sets", title: "Sets", copy: "Ready-to-style combinations. More sets can be uploaded by admin later.", active: true },
+      { id: "sets", title: "Sets", copy: "Ready-to-style combinations curated for effortless gifting and everyday charm styling.", active: true },
     ],
     sets: [
       {
@@ -59,7 +59,7 @@ function defaultStoreSettings() {
         price: 68,
         stock: 0,
         image: "assets/products/uniform/heart-stars-charm-chain-necklace.jpg",
-        description: "Coming soon. Admin can update photos, price, stock and copy when set products arrive.",
+        description: "A polished starter edit for effortless charm styling. Join the next drop when sets are released.",
         active: true,
       },
     ],
@@ -320,12 +320,7 @@ function productCard(product) {
         <button class="product-title product-title-button" data-view="${product.id}">
           <span>${escapeHtml(product.title)}</span><span class="price-stack">${priceLabel}</span>
         </button>
-        <div class="product-meta">${escapeHtml(product.description)}</div>
-        <p class="product-scale-note">Photo enlarged for detail. Actual size may differ from on-screen display.</p>
         <div class="rating">${product.stock <= 0 ? "Sold out" : product.stock <= 3 ? "Low in stock" : ""}</div>
-        <div class="purchase-row">
-          <label>Qty <input type="number" min="1" max="${Math.max(1, product.stock)}" value="1" data-card-qty="${product.id}"></label>
-        </div>
         <div class="card-actions">
           <button class="quick-view ${state.wishlist.includes(product.id) ? "saved" : ""}" data-wishlist="${product.id}" aria-label="Save ${escapeHtml(product.title)} to wishlist">♡</button>
           <button class="add-cart" data-add="${product.id}" ${product.stock < 1 ? "disabled" : ""}>Add to bag</button>
@@ -355,7 +350,7 @@ function renderEditableSection(containerId, sectionId, products) {
   const copy = wrapper?.querySelector(".section-copy");
   if (heading) heading.textContent = section.title;
   if (copy) copy.textContent = section.copy;
-  container.innerHTML = products.map(productCard).join("") || `<div class="empty">Admin can add products for this section.</div>`;
+  container.innerHTML = products.map(productCard).join("") || `<div class="empty">A fresh edit is being prepared.</div>`;
 }
 
 function renderFeaturedSections() {
@@ -397,7 +392,7 @@ function renderFeaturedSections() {
         </div>
       </div>
     </article>
-  `).join("") || `<div class="empty">Sets coming soon. Admin can upload photos, prices and stock.</div>`;
+  `).join("") || `<div class="empty">Ready-made sets are being prepared for the next drop.</div>`;
 
   const customSections = document.querySelector("#customSections");
   if (customSections) {
@@ -450,6 +445,10 @@ function renderDeliverySelects() {
 function renderCart() {
   if (!selectors.cartItems) return;
   const qty = state.cart.reduce((sum, item) => sum + item.qty, 0);
+  refreshSettings();
+  const cartSubtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const freeThreshold = Number(state.settings.shipping?.freeThreshold ?? 100);
+  const awayFromFreeShipping = Math.max(0, freeThreshold - cartSubtotal);
   selectors.cartCount.textContent = qty;
   selectors.cartItems.innerHTML = state.cart.map((item) => `
     <div class="cart-row">
@@ -468,6 +467,16 @@ function renderCart() {
   `).join("") || `<div class="empty">Your bag is empty.</div>`;
   renderDeliverySelects();
   const totals = cartTotals();
+  const freeShippingNode = document.querySelector("#freeShippingProgress");
+  if (freeShippingNode) {
+    const progress = freeThreshold > 0 ? Math.min(100, Math.round((cartSubtotal / freeThreshold) * 100)) : 100;
+    const message = cartSubtotal <= 0
+      ? `Free standard shipping over ${money.format(freeThreshold)}.`
+      : awayFromFreeShipping > 0
+        ? `You are ${money.format(awayFromFreeShipping)} away from free standard shipping.`
+        : "You unlocked free standard shipping.";
+    freeShippingNode.innerHTML = `<span>${message}</span><i style="--progress:${progress}%"></i>`;
+  }
   document.querySelector("#subtotal").textContent = money.format(totals.subtotal);
   document.querySelector("#discount").textContent = totals.discount ? `-${money.format(totals.discount)}` : money.format(0);
   document.querySelector("#shipping").textContent = totals.shipping ? money.format(totals.shipping) : "Free";
